@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechGrid Systems // Integrated Enterprise Architecture Blueprint</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'Fira Code', monospace; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0b101d; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    </style>
+</head>
+<body class="bg-[#0b101d] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-teal-500 selection:text-white">
+
+    <header class="border-b border-slate-800 bg-[#0f172a]/80 backdrop-blur sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-lg bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-teal-400 font-bold text-lg">⚡</div>
+            <div>
+                <h1 class="font-bold text-lg tracking-wide text-slate-100 flex items-center gap-2">
+                    TECHGRID SYSTEMS <span class="text-xs bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded border border-teal-500/30 font-mono">v2.6 NOMINAL</span>
+                </h1>
+                <p class="text-xs text-slate-400 font-mono">Ubuntu Server (`/var/www/`) &bull; 17 Subdomains Mapped</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2 bg-slate-900 p-1.5 rounded-lg border border-slate-800">
+            <button onclick="switchTab('canvas')" id="btn-canvas" class="px-4 py-1.5 rounded text-xs font-medium transition-all bg-teal-600 text-white shadow">Canvas Blueprint</button>
+            <button onclick="switchTab('cards')" id="btn-cards" class="px-4 py-1.5 rounded text-xs font-medium transition-all text-slate-400 hover:text-white">Structured Grid</button>
+            <button onclick="switchTab('docs')" id="btn-docs" class="px-4 py-1.5 rounded text-xs font-medium transition-all text-slate-400 hover:text-white">Markdown Docs</button>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col gap-6">
+
+        <section id="view-canvas" class="space-y-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 bg-slate-900/60 border border-slate-800/80 p-4 rounded-xl">
+                <div>
+                    <h2 class="text-sm font-semibold text-teal-400 font-mono tracking-wider uppercase">Interactive Swimlane Architecture</h2>
+                    <p class="text-xs text-slate-400">Live rendering of edge routing, secure portals, internal operations, and Linux server mounts.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="resetZoom()" class="bg-slate-800 hover:bg-slate-700 text-xs px-3 py-1.5 rounded-lg border border-slate-700 font-mono transition">Reset View</button>
+                    <button onclick="triggerRedraw()" class="bg-teal-600 hover:bg-teal-500 text-xs px-3 py-1.5 rounded-lg font-mono transition text-white">Refresh Canvas</button>
+                </div>
+            </div>
+            
+            <div class="border border-slate-800 rounded-xl overflow-hidden shadow-2xl bg-[#0b101d]">
+                <div class="overflow-x-auto">
+                    <canvas id="blueprintCanvas" width="1440" height="920" class="block w-full min-w-[1200px] cursor-crosshair"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-cards" class="hidden space-y-4">
+            <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-xl">
+                <h2 class="text-sm font-semibold text-purple-400 font-mono tracking-wider uppercase">Structured Enterprise Service Blueprint</h2>
+                <p class="text-xs text-slate-400">Categorized hierarchical layers across all active system touchpoints.</p>
+            </div>
+
+            <div class="flex flex-col gap-3">
+                <!-- Lane 1 -->
+                <div class="grid grid-cols-1 lg:grid-cols-[240px_1fr] rounded-xl overflow-hidden border border-emerald-500/30 bg-[#0f172a]">
+                    <div class="bg-emerald-600 text-white p-5 flex items-center font-bold text-xs font-mono uppercase tracking-wider border-r border-emerald-500/30">
+                        Edge & Client Touchpoints (DNS / Wildcard)
+                    </div>
+                    <div class="p-4 flex flex-wrap gap-3 items-center">
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-teal-800">techgrid-systems.org.uk</div>
+                            <div class="text-[10px] text-slate-500">Root Marketing</div>
+                        </div>
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-teal-800">www.techgrid-systems.org.uk</div>
+                            <div class="text-[10px] text-slate-500">Alias</div>
+                        </div>
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-teal-800">news.techgrid-systems.org.uk</div>
+                            <div class="text-[10px] text-slate-500">Company Feed</div>
+                        </div>
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-teal-800">status.techgrid-systems.org.uk</div>
+                            <div class="text-[10px] text-slate-500">Uptime Telemetry</div>
+                        </div>
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-teal-800">locallinesystems.*</div>
+                            <div class="text-[10px] text-slate-500">Regional Utility</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lane 2 -->
+                <div class="grid grid-cols-1 lg:grid-cols-[240px_1fr] rounded-xl overflow-hidden border border-purple-500/30 bg-[#0f172a]">
+                    <div class="bg-purple-600 text-white p-5 flex items-center font-bold text-xs font-mono uppercase tracking-wider border-r border-purple-500/30">
+                        Client Portals & Authentication
+                    </div>
+                    <div class="p-4 flex flex-wrap gap-3 items-center">
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-purple-800">portal.techgrid-systems...</div>
+                            <div class="text-[10px] text-slate-500">Client Core Access</div>
+                        </div>
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-purple-800">dcp.techgrid-systems...</div>
+                            <div class="text-[10px] text-slate-500">Digital Control Panel</div>
+                        </div>
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-purple-800">helpdesk.techgrid-systems...</div>
+                            <div class="text-[10px] text-slate-500">Support Ticketing</div>
+                        </div>
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-purple-800">support.techgrid-systems...</div>
+                            <div class="text-[10px] text-slate-500">Client Escalations</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lane 3 -->
+                <div class="grid grid-cols-1 lg:grid-cols-[240px_1fr] rounded-xl overflow-hidden border border-emerald-700/30 bg-[#0f172a]">
+                    <div class="bg-emerald-700 text-white p-5 flex items-center font-bold text-xs font-mono uppercase tracking-wider border-r border-emerald-700/30">
+                        Internal Engineering & Operations
+                    </div>
+                    <div class="p-4 flex flex-wrap gap-3 items-center">
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-emerald-800">internal.techgrid-systems...</div>
+                            <div class="text-[10px] text-slate-500">Ops Dashboard</div>
+                        </div>
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-emerald-800">notes.techgrid-systems...</div>
+                            <div class="text-[10px] text-slate-500">Engineering Notepad</div>
+                        </div>
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-emerald-800">password-vault.*</div>
+                            <div class="text-[10px] text-slate-500">Secure Secrets Vault</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lane 4 -->
+                <div class="grid grid-cols-1 lg:grid-cols-[240px_1fr] rounded-xl overflow-hidden border border-purple-700/30 bg-[#0f172a]">
+                    <div class="bg-purple-700 text-white p-5 flex items-center font-bold text-xs font-mono uppercase tracking-wider border-r border-purple-700/30">
+                        AI & Micro-App Workflows
+                    </div>
+                    <div class="p-4 flex flex-wrap gap-3 items-center">
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-purple-800">ai.techgrid-systems...</div>
+                            <div class="text-[10px] text-slate-500">AI Engine Node</div>
+                        </div>
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-purple-800">chat.techgrid-systems...</div>
+                            <div class="text-[10px] text-slate-500">Agentic Chatbus</div>
+                        </div>
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-purple-800">automation.techgrid-systems...</div>
+                            <div class="text-[10px] text-slate-500">Webhook Handlers</div>
+                        </div>
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-purple-800">power-automate-training.*</div>
+                            <div class="text-[10px] text-slate-500">Workflows</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lane 5 -->
+                <div class="grid grid-cols-1 lg:grid-cols-[240px_1fr] rounded-xl overflow-hidden border border-emerald-800/30 bg-[#0f172a]">
+                    <div class="bg-emerald-800 text-white p-5 flex items-center font-bold text-xs font-mono uppercase tracking-wider border-r border-emerald-800/30">
+                        Server Mounts & GitHub CI/CD
+                    </div>
+                    <div class="p-4 flex flex-wrap gap-3 items-center">
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-emerald-900">/var/www/html/</div>
+                            <div class="text-[10px] text-slate-500">Core Web Root</div>
+                        </div>
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-emerald-900">/var/www/portal...</div>
+                            <div class="text-[10px] text-slate-500">Virtual Host Bind</div>
+                        </div>
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-emerald-900">tgs-cpanel</div>
+                            <div class="text-[10px] text-slate-500">Admin Wrappers</div>
+                        </div>
+                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
+                            <div class="font-bold text-xs font-mono text-emerald-900">GitHub Repos</div>
+                            <div class="text-[10px] text-slate-500">Webhook / SSH Sync</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-docs" class="hidden space-y-6 bg-slate-900/40 border border-slate-800 p-6 md:p-8 rounded-xl">
+            <div class="border-b border-slate-800 pb-4">
+                <h2 class="text-xl font-bold text-teal-400 font-mono">TechGrid Systems // Integrated Infrastructure Blueprint</h2>
+                <p class="text-xs text-slate-400 mt-1">Host Environment: Ubuntu Linux Server (`/var/www/`) &bull; Architecture v2.6</p>
+            </div>
+
+            <div class="space-y-6 text-slate-300 text-sm leading-relaxed">
+                <div>
+                    <h3 class="text-base font-semibold text-white mb-2 font-mono text-teal-300">1. High-Level Topology & Domain Mapping</h3>
+                    <p class="text-xs text-slate-400 mb-3">All subdomains route through an edge proxy/reverse-proxy (Nginx) running on the Ubuntu server, mapping incoming requests to their respective document roots or upstream application services.</p>
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 font-mono text-xs overflow-x-auto text-teal-400">
+<pre>                  [ Public / User Traffic ]
+                              │
+               (DNS Wildcard / A Records)
+                              ▼
+           ┌─────────────────────────────────────┐
+           │   Ubuntu Linux Edge Server (Nginx)  │
+           └──────────────────┬──────────────────┘
+                              │
+       ┌──────────────────────┴──────────────────────┐
+       ▼                                             ▼
+[ Core Web & Marketing ]                     [ Specialized Micro-Apps ]
+ • techgrid-systems.org.uk                    • ai.techgrid-systems.org.uk
+ • www.techgrid-systems.org.uk                • chat.techgrid-systems.org.uk
+                                             • automation.techgrid-systems.org.uk
+       │                                     • power-automate-training.*
+       │
+       ▼                                     [ Client & Internal Ops ]
+[ Document Roots (/var/www/) ]                • portal.techgrid-systems.org.uk
+ • /html (Main Web)                          • dcp.techgrid-systems.org.uk
+ • /dcp.techgrid-systems.org.uk              • helpdesk.techgrid-systems.org.uk
+ • /portal.techgrid-systems.org.uk           • support.techgrid-systems.org.uk
+ • /status.techgrid-systems.org.uk           • internal.techgrid-systems.org.uk
+ • /notes.techgrid-systems.org.uk            • news.techgrid-systems.org.uk
+ • /password-vault.*                         • locallinesystems.*
+                                             • status.techgrid-systems.org.uk
+                                             • tgs-cpanel.techgrid-systems.org.uk</pre>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-base font-semibold text-white mb-2 font-mono text-teal-300">2. Server Directory Mounting (`/var/www/`)</h3>
+                    <div class="overflow-x-auto border border-slate-800 rounded-lg">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-900 text-slate-400 border-b border-slate-800 font-mono">
+                                <tr>
+                                    <th class="p-3">Directory Path / Subdomain Target</th>
+                                    <th class="p-3">Function & Core Purpose</th>
+                                    <th class="p-3">Associated Technologies</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800 font-mono">
+                                <tr class="hover:bg-slate-800/50">
+                                    <td class="p-3 text-teal-400">/var/www/html/</td>
+                                    <td class="p-3 text-slate-300">Main public marketing site & root entry point</td>
+                                    <td class="p-3 text-slate-400">HTML, CSS, JS, PHP</td>
+                                </tr>
+                                <tr class="hover:bg-slate-800/50">
+                                    <td class="p-3 text-teal-400">/var/www/dcp.techgrid-systems...</td>
+                                    <td class="p-3 text-slate-300">Client/Partner Digital Control Panel interface</td>
+                                    <td class="p-3 text-slate-400">PHP, MySQL, API Handlers</td>
+                                </tr>
+                                <tr class="hover:bg-slate-800/50">
+                                    <td class="p-3 text-teal-400">/var/www/helpdesk.techgrid-systems...</td>
+                                    <td class="p-3 text-slate-300">Ticketing and user support ticketing backend</td>
+                                    <td class="p-3 text-slate-400">PHP, Database backend</td>
+                                </tr>
+                                <tr class="hover:bg-slate-800/50">
+                                    <td class="p-3 text-teal-400">/var/www/notes.techgrid-systems...</td>
+                                    <td class="p-3 text-slate-300">Collaborative internal engineering notepad</td>
+                                    <td class="p-3 text-slate-400">Lightweight DB / Flat-file sync</td>
+                                </tr>
+                                <tr class="hover:bg-slate-800/50">
+                                    <td class="p-3 text-teal-400">/var/www/password-vault.*</td>
+                                    <td class="p-3 text-slate-300">Secure credential store & internal secrets management</td>
+                                    <td class="p-3 text-slate-400">Encrypted PHP/JS vault</td>
+                                </tr>
+                                <tr class="hover:bg-slate-800/50">
+                                    <td class="p-3 text-teal-400">/var/www/portal.techgrid-systems...</td>
+                                    <td class="p-3 text-slate-300">Core client portal access point</td>
+                                    <td class="p-3 text-slate-400">PHP, User Auth, Session DB</td>
+                                </tr>
+                                <tr class="hover:bg-slate-800/50">
+                                    <td class="p-3 text-teal-400">/var/www/status.techgrid-systems...</td>
+                                    <td class="p-3 text-slate-300">System uptime & infrastructure node monitor</td>
+                                    <td class="p-3 text-slate-400">PHP Status Engine</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-base font-semibold text-white mb-2 font-mono text-teal-300">3. Version Control & GitHub Pipeline Integration</h3>
+                    <p class="text-xs text-slate-400 mb-3">To ensure seamless updates without disrupting active subdomains, your GitHub repositories map directly to your local development and deployment workflow.</p>
+                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 font-mono text-xs overflow-x-auto text-teal-400">
+<pre>[ GitHub Organization Repositories ]
+├── techgrid-core-web       ──(CI/CD / Webhook)──> /var/www/html/
+├── techgrid-client-portal  ──(SSH / Sync)───────> /var/www/portal.techgrid-systems.org.uk/
+├── techgrid-status-engine  ──(Automated Push)───> /var/www/status.techgrid-systems.org.uk/
+└── techgrid-vault-secure   ──(Manual Secure Deploy)> /var/www/password-vault.*</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-slate-800 py-4 text-center text-xs text-slate-500 font-mono mt-auto bg-[#0b101d]">
+        TechGrid Systems Architecture Engine &bull; Generated Live from Server Scan &bull; All Subdomains Nominal
+    </footer>
+
+    <script>
+        function switchTab(tab) {
+            document.getElementById('view-canvas').classList.add('hidden');
+            document.getElementById('view-cards').classList.add('hidden');
+            document.getElementById('view-docs').classList.add('hidden');
+
+            document.getElementById('btn-canvas').className = "px-4 py-1.5 rounded text-xs font-medium transition-all text-slate-400 hover:text-white";
+            document.getElementById('btn-cards').className = "px-4 py-1.5 rounded text-xs font-medium transition-all text-slate-400 hover:text-white";
+            document.getElementById('btn-docs').className = "px-4 py-1.5 rounded text-xs font-medium transition-all text-slate-400 hover:text-white";
+
+            if (tab === 'canvas') {
+                document.getElementById('view-canvas').classList.remove('hidden');
+                document.getElementById('btn-canvas').className = "px-4 py-1.5 rounded text-xs font-medium transition-all bg-teal-600 text-white shadow";
+                drawBlueprint();
+            } else if (tab === 'cards') {
+                document.getElementById('view-cards').classList.remove('hidden');
+                document.getElementById('btn-cards').className = "px-4 py-1.5 rounded text-xs font-medium transition-all bg-purple-600 text-white shadow";
+            } else if (tab === 'docs') {
+                document.getElementById('view-docs').classList.remove('hidden');
+                document.getElementById('btn-docs').className = "px-4 py-1.5 rounded text-xs font-medium transition-all bg-teal-600 text-white shadow";
+            }
+        }
+
+        const canvas = document.getElementById('blueprintCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const lanes = [
+            { id: 1, title: "DNS / ROUTING LAYER", color: "#0d9488", y: 40, height: 130 },
+            { id: 2, title: "CUSTOMER ACTIONS // SECURE PORTALS", color: "#4f46e5", y: 220, height: 130 },
+            { id: 3, title: "ON-STAGE // INTERNAL OPERATIONS", color: "#1e293b", y: 400, height: 130 },
+            { id: 4, title: "BACKSTAGE // AI & AUTOMATION", color: "#0f766e", y: 580, height: 130 },
+            { id: 5, title: "SUPPORT PROCESS // SERVER & GITHUB", color: "#3b82f6", y: 760, height: 130 }
+        ];
+
+        const cards = [
+            // Lane 1: DNS & Edge Touchpoints (Indices 0 to 5)
+            { lane: 1, x: 230, y: 70, w: 170, h: 75, title: "www", sub: "CNAME -> github.io", icon: "🌐" },
+            { lane: 1, x: 415, y: 70, w: 170, h: 75, title: "ai", sub: "CNAME -> github.io", icon: "🤖" },
+            { lane: 1, x: 600, y: 70, w: 170, h: 75, title: "sharepoint", sub: "CNAME -> github.io", icon: "📁" },
+            { lane: 1, x: 785, y: 70, w: 170, h: 75, title: "support", sub: "CNAME -> github.io", icon: "📞" },
+            { lane: 1, x: 970, y: 70, w: 170, h: 75, title: "training", sub: "CNAME -> github.io", icon: "🎓" },
+            { lane: 1, x: 1155, y: 70, w: 215, h: 75, title: "dcp / helpdesk", sub: "A -> 185.249.72.233", icon: "🖥️" },
+
+            // Lane 2: Secure Portals (Indices 6 to 9)
+            { lane: 2, x: 250, y: 250, w: 260, h: 75, title: "portal.techgrid-systems", sub: "A: 185.249.72.233", icon: "🛡️" },
+            { lane: 2, x: 530, y: 250, w: 260, h: 75, title: "dcp.techgrid-systems", sub: "A: 185.249.72.233", icon: "🎛️" },
+            { lane: 2, x: 810, y: 250, w: 270, h: 75, title: "helpdesk.techgrid-systems", sub: "A: 185.249.72.233", icon: "🎫" },
+            { lane: 2, x: 1090, y: 250, w: 260, h: 75, title: "status.techgrid-systems", sub: "A: 185.249.72.233", icon: "📊" },
+
+            // Lane 3: Internal Operations (Indices 10 to 12)
+            { lane: 3, x: 250, y: 430, w: 320, h: 75, title: "locallinesystems.techgrid", sub: "A: 185.249.72.233", icon: "📡" },
+            { lane: 3, x: 590, y: 430, w: 340, h: 75, title: "notes.techgrid-systems", sub: "A: 185.249.72.233", icon: "📝" },
+            { lane: 3, x: 950, y: 430, w: 400, h: 75, title: "password-vault.techgrid-systems", sub: "A: 185.249.72.233", icon: "🔐" },
+
+            // Lane 4: Backstage AI & Workflows (Indices 13 to 15)
+            { lane: 4, x: 250, y: 610, w: 340, h: 75, title: "ai.techgrid-systems", sub: "CNAME: techgrid-systems.github.io", icon: "⚡" },
+            { lane: 4, x: 610, y: 610, w: 360, h: 75, title: "training.techgrid-systems", sub: "CNAME: techgrid-systems.github.io", icon: "📘" },
+            { lane: 4, x: 990, y: 610, w: 360, h: 75, title: "sharepoint.techgrid-systems", sub: "CNAME: techgrid-systems.github.io", icon: "🔗" },
+
+            // Lane 5: Infrastructure & Repositories (Indices 16 to 18)
+            { lane: 5, x: 250, y: 790, w: 340, h: 75, title: "Ubuntu Server Host", sub: "IP: 185.249.72.233 (/var/www/)", icon: "🐧" },
+            { lane: 5, x: 610, y: 790, w: 360, h: 75, title: "tgs-cpanel Wrapper", sub: "A: 185.249.72.233", icon: "🛠️" },
+            { lane: 5, x: 990, y: 790, w: 360, h: 75, title: "GitHub Repositories", sub: "techgrid-systems.github.io", icon: "🐙" }
+        ];
+
+        function drawBlueprint() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "#0b101d";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            lanes.forEach((lane, index) => {
+                ctx.fillStyle = lane.color;
+                ctx.fillRect(0, lane.y, 220, lane.height);
+
+                ctx.fillStyle = index % 2 === 0 ? "#0f172a" : "#111827";
+                ctx.fillRect(220, lane.y, canvas.width - 220, lane.height);
+
+                ctx.strokeStyle = "#1e293b";
+                ctx.lineWidth = 2;
+                ctx.strokeRect(0, lane.y, canvas.width, lane.height);
+
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold 11px 'Courier New', monospace";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                
+                wrapText(ctx, lane.title, 110, lane.y + lane.height / 2, 200, 16);
+            });
+
+            const boundaryYs = [190, 370, 550, 730];
+            const boundaryTitles = [
+                "DNS ROUTING BOUNDARY",
+                "SECURE PORTAL LAYER",
+                "INTERNAL OPS & SECRETS",
+                "GITHUB PAGES & SERVER MOUNT"
+            ];
+
+            boundaryYs.forEach((by, idx) => {
+                ctx.strokeStyle = "#38bdf8";
+                ctx.lineWidth = 3;
+                ctx.setLineDash([6, 4]);
+                ctx.beginPath();
+                ctx.moveTo(220, by);
+                ctx.lineTo(canvas.width, by);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                ctx.fillStyle = "#0b101d";
+                ctx.fillRect(240, by - 10, 240, 20);
+                ctx.strokeStyle = "#38bdf8";
+                ctx.lineWidth = 1;
+                ctx.strokeRect(240, by - 10, 240, 20);
+
+                ctx.fillStyle = "#38bdf8";
+                ctx.font = "bold 10px 'Courier New', monospace";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(boundaryTitles[idx], 360, by);
+            });
+
+            cards.forEach(card => {
+                ctx.fillStyle = "#ffffff";
+                ctx.strokeStyle = "#cbd5e1";
+                ctx.lineWidth = 1;
+                roundedRect(ctx, card.x, card.y, card.w, card.h, 6, true, true);
+
+                ctx.fillStyle = "#1e293b";
+                ctx.font = "14px sans-serif";
+                ctx.textAlign = "left";
+                ctx.textBaseline = "top";
+                ctx.fillText(card.icon, card.x + 10, card.y + 12);
+
+                ctx.font = "bold 10px 'Courier New', monospace";
+                ctx.fillText(card.title, card.x + 35, card.y + 10, card.w - 45);
+
+                ctx.fillStyle = "#64748b";
+                ctx.font = "9px 'Courier New', monospace";
+                ctx.fillText(card.sub, card.x + 35, card.y + 35, card.w - 45);
+            });
+        }
+
+        function roundedRect(ctx, x, y, width, height, radius, fill, stroke) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+            if (fill) ctx.fill();
+            if (stroke) ctx.stroke();
+        }
+
+        function wrapText(context, text, x, y, maxWidth, lineHeight) {
+            const words = text.split(' ');
+            let line = '';
+            let currentY = y;
+
+            if (words.length > 1) {
+                currentY -= lineHeight / 2;
+            }
+
+            for (let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = context.measureText(testLine);
+                const testWidth = metrics.width;
+                if (testWidth > maxWidth && n > 0) {
+                    context.fillText(line, x, currentY);
+                    line = words[n] + ' ';
+                    currentY += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            context.fillText(line, x, currentY);
+        }
+
+        function resetZoom() {
+            drawBlueprint();
+        }
+
+        function triggerRedraw() {
+            drawBlueprint();
+        }
+
+        window.onload = function() {
+            drawBlueprint();
+        };
+    </script>
+</body>
+</html>
