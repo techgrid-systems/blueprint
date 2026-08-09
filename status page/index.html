@@ -1,0 +1,108 @@
+<?php
+// Set timezone to BST (or local time)
+date_default_timezone_set('Europe/London');
+
+// Database Connection
+$db = new PDO('mysql:host=localhost;dbname=status_monitor', 'root', 'YourNewStrongPassword');
+$db->exec("SET time_zone = '+01:00'");
+
+// Fetch Data
+$nodes = $db->query("SELECT * FROM node_status ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
+
+// Calculate Down Nodes for warning box
+$downNodes = array_filter($nodes, fn($n) => $n['status'] === 'down');
+$downNames = array_column($downNodes, 'name');
+
+// Bucketing logic
+$services = array_filter($nodes, fn($n) => $n['id'] <= 9);
+$core = array_filter($nodes, fn($n) => $n['id'] >= 10);
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>System Status | Live</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-50">
+    <main class="max-w-4xl mx-auto px-6 py-10">
+        <h1 class="text-3xl font-bold text-slate-800 mb-8 text-center">TechGrid System Status</h1>
+
+        <!-- Urgent Incident Warning Box -->
+        <?php if (!empty($downNames)): ?>
+            <div class="bg-red-50 border-l-4 border-red-500 p-6 mb-8 shadow-sm">
+                <div class="flex">
+                    <div class="flex-shrink-0"><i class="fas fa-exclamation-triangle text-red-500 text-xl"></i></div>
+                    <div class="ml-4">
+                        <p class="text-sm text-red-700 font-bold">TechGrid Systems is aware of an issue with: <?= htmlspecialchars(implode(', ', $downNames)) ?>.</p>
+                        <p class="text-sm text-red-700 mt-2">We are prioritizing this as a matter of urgency and will be sending out communications shortly. If you have questions, please contact helpdesk@techgrid-systems.org.uk or 07487 613849.</p>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <!-- Buckets: Core & Services -->
+        <h2 class="text-xl font-semibold text-slate-600 mb-4">Core Infrastructure</h2>
+        <div class="bg-white rounded shadow-md divide-y divide-slate-100 mb-8">
+            <?php foreach ($core as $n): ?>
+                <div class="p-4 flex justify-between items-center">
+                    <span><i class="fas fa-<?= $n['icon'] ?> w-6 text-slate-400"></i> <?= htmlspecialchars($n['name']) ?></span>
+                    <span class="px-3 py-1 rounded-full text-[11px] font-bold <?= $n['status'] === 'up' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600' ?>">
+                        <?= strtoupper($n['status']) ?>
+                    </span>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <h2 class="text-xl font-semibold text-slate-600 mb-4">Services</h2>
+        <div class="bg-white rounded shadow-md divide-y divide-slate-100 mb-10">
+            <?php foreach ($services as $n): ?>
+                <div class="p-4 flex justify-between items-center">
+                    <span><i class="fas fa-<?= $n['icon'] ?> w-6 text-slate-400"></i> <?= htmlspecialchars($n['name']) ?></span>
+                    <span class="px-3 py-1 rounded-full text-[11px] font-bold <?= $n['status'] === 'up' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600' ?>">
+                        <?= strtoupper($n['status']) ?>
+                    </span>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Active Incidents & Timeline Header -->
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-slate-600">Active Incidents</h2>
+            <a href="incidents.php" class="text-blue-600 text-sm font-bold hover:underline">View Full Incident History &rarr;</a>
+        </div>
+
+        <!-- Active Incidents List -->
+        <div class="space-y-6">
+            <?php 
+            $incidents = $db->query("SELECT * FROM history WHERE is_closed = 0 ORDER BY created_at DESC")->fetchAll(PDO::FETCH_ASSOC);
+            
+            if (empty($incidents)): ?>
+                <div class="bg-white p-6 rounded shadow-md text-center text-slate-500">
+                    No active incidents reported. All systems operational.
+                </div>
+            <?php else:
+                foreach ($incidents as $h): 
+                    $uStmt = $db->prepare("SELECT * FROM incident_updates WHERE incident_id = ? ORDER BY created_at DESC");
+                    $uStmt->execute([$h['id']]);
+                    $updates = $uStmt->fetchAll(PDO::FETCH_ASSOC);
+            ?>
+                <div class="bg-white p-6 rounded shadow-md border-l-4 border-amber-500">
+                    <h3 class="font-bold text-lg text-slate-800 mb-2"><?= htmlspecialchars($h['title']) ?></h3>
+                    <p class="text-sm text-slate-600 mb-4"><?= htmlspecialchars($h['description']) ?></p>
+                    <div class="space-y-3">
+                        <?php foreach ($updates as $u): ?>
+                            <div class="border-l-4 border-blue-400 pl-3">
+                                <small class="text-slate-400 font-bold block"><?= date('d M, H:i', strtotime($u['created_at'])) ?></small>
+                                <p class="text-sm text-slate-700"><?= htmlspecialchars($u['update_text']) ?></p>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endforeach; 
+            endif; ?>
+        </div>
+    </main>
+</body>
+</html>
