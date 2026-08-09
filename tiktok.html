@@ -2,185 +2,254 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Professional TikTok Slides Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechGrid Architecture Guide</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .slide {
-            width: 1080px;
-            height: 1920px;
-            background: linear-gradient(135deg, #090d16 0%, #0f172a 100%);
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 100px 70px;
-            box-sizing: border-box;
-            position: relative;
-            page-break-after: always;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-        body {
-            background: #1e293b;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 50px;
-            padding: 50px;
-            margin: 0;
-            font-family: system-ui, -apple-system, sans-serif;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; background: #020617; }
+        .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(56, 189, 248, 0.2); }
+        .neon-text { text-shadow: 0 0 15px rgba(56, 189, 248, 0.6); color: #38bdf8; }
+        .code-font { font-family: 'JetBrains Mono', monospace; }
+        .radial-bg { background: radial-gradient(circle at 50% 0%, #1e293b 0%, #020617 70%); }
+        .glow-border { box-shadow: 0 0 20px rgba(56, 189, 248, 0.15); }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
 
-    <!-- SLIDE 1: COVER -->
-    <div class="slide">
-        <div class="flex justify-between items-center">
-            <span class="text-blue-400 font-bold tracking-widest uppercase text-xl">TechGrid Systems</span>
-            <span class="bg-blue-600/30 text-blue-400 border border-blue-500/30 px-4 py-1.5 rounded-full text-lg font-semibold">DevOps Guide</span>
-        </div>
-        <div class="space-y-6 text-center my-auto">
-            <h1 class="text-6xl font-black tracking-tight leading-tight">BUILD A LIVE ENTERPRISE STATUS PAGE 🚀</h1>
-            <p class="text-2xl text-slate-300 font-medium">Build an automated, self-hosted monitoring system using PHP, MySQL, & Tailwind CSS.</p>
-        </div>
-        <div class="bg-blue-600/20 border border-blue-500/40 p-5 rounded-2xl text-center text-blue-300 text-xl font-bold animate-pulse">
-            👉 Swipe for the step-by-step breakdown
-        </div>
+    <!-- Progress Header -->
+    <div class="w-full max-w-md flex justify-between items-center mb-4 px-2">
+        <span class="text-[10px] font-bold tracking-[0.3em] text-sky-500 uppercase">TechGrid // Studio 01</span>
+        <span id="counter" class="text-[10px] text-slate-500 font-mono">01 / 10</span>
     </div>
 
-    <!-- SLIDE 2: DATABASE ARCHITECTURE -->
-    <div class="slide">
-        <div>
-            <span class="text-blue-500 font-bold text-xl tracking-widest uppercase">Step 01 / Database Architecture</span>
-            <h2 class="text-4xl font-extrabold mt-3 tracking-tight">Structured MySQL Backend 🗄️</h2>
-        </div>
-        <div class="space-y-5 text-xl bg-slate-900/80 p-8 rounded-3xl border border-slate-800 my-auto">
-            <p class="text-slate-300 font-medium leading-relaxed">A robust status page relies on clean relational data models. Build these 4 foundational tables:</p>
+    <!-- TikTok 9:16 Frame -->
+    <div id="deck" class="w-full max-w-md aspect-[9/16] radial-bg rounded-[2.5rem] border border-slate-800 shadow-2xl flex flex-col p-8 relative overflow-hidden select-none glow-border">
+        
+        <!-- Background Elements -->
+        <div class="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none"></div>
+        <div class="absolute top-[-10%] right-[-10%] w-64 h-64 bg-sky-500/10 rounded-full blur-[80px]"></div>
+
+        <!-- SLIDE 1: HOOK -->
+        <div class="slide flex flex-col h-full justify-between z-10">
+            <div class="space-y-1">
+                <p class="text-sky-500 font-bold text-[10px] tracking-widest uppercase">Elite DevOps Series</p>
+                <h2 class="text-3xl font-extrabold leading-tight tracking-tighter">Build this <span class="neon-text">Live Status</span> Dashboard</h2>
+            </div>
+            <div class="relative py-10">
+                <div class="glass p-4 rounded-2xl transform rotate-[-2deg] scale-110 shadow-2xl border-sky-400/30">
+                    <img src="https://i.imgur.com/8N4uH6S.png" class="rounded-lg opacity-90" alt="UI Preview">
+                    <div class="absolute top-2 right-2 flex gap-1">
+                        <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                        <div class="w-2 h-2 bg-amber-500 rounded-full"></div>
+                        <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
             <div class="space-y-4">
-                <div class="border-l-4 border-blue-500 pl-4">
-                    <strong class="text-white block text-xl">node_status</strong>
-                    <span class="text-slate-400 text-lg">Tracks individual endpoint URLs, status codes, and device icons.</span>
-                </div>
-                <div class="border-l-4 border-amber-500 pl-4">
-                    <strong class="text-white block text-xl">history & incident_updates</strong>
-                    <span class="text-slate-400 text-lg">Separates master incident logs from granular, time-stamped timeline updates.</span>
-                </div>
-                <div class="border-l-4 border-emerald-500 pl-4">
-                    <strong class="text-white block text-xl">admin_users</strong>
-                    <span class="text-slate-400 text-lg">Stores hashed administrative credentials using secure default algorithms.</span>
+                <p class="text-xs text-slate-400 leading-relaxed">Stop paying for SaaS. Build a self-hosted, automated infrastructure monitoring system with PHP & MySQL.</p>
+                <div class="glass p-3 rounded-xl text-center text-[10px] font-bold tracking-widest text-sky-400 border-sky-500/20 uppercase animate-pulse">
+                    Swipe for the full blueprint 
                 </div>
             </div>
         </div>
-        <div class="text-slate-500 text-lg text-center font-mono">mysql -u root -p status_monitor</div>
-    </div>
 
-    <!-- SLIDE 3: AUTOMATED MONITORING -->
-    <div class="slide">
-        <div>
-            <span class="text-blue-500 font-bold text-xl tracking-widest uppercase">Step 02 / Telemetry Engine</span>
-            <h2 class="text-4xl font-extrabold mt-3 tracking-tight">Automated Health Checks (`monitor.php`) 🔍</h2>
-        </div>
-        <div class="space-y-4 text-lg bg-slate-900/80 p-8 rounded-3xl border border-slate-800 my-auto">
-            <p class="text-slate-300 leading-relaxed font-medium">Standard web requests fail when checking raw infrastructure like DNS (`8.8.8.8`). Your script must handle both protocols natively:</p>
-            <div class="bg-slate-950 p-5 rounded-2xl text-emerald-400 font-mono text-base leading-relaxed overflow-x-auto border border-slate-800">
-                if (filter_var($n['url'], FILTER_VALIDATE_IP)) {<br>
-                &nbsp;&nbsp;// Low-level socket check for DNS (Port 53)<br>
-                &nbsp;&nbsp;$conn = @fsockopen($n['url'], 53, $err, $str, 2);<br>
-                } else {<br>
-                &nbsp;&nbsp;// cURL inspection for secure HTTPS web portals<br>
-                &nbsp;&nbsp;$ch = curl_init($n['url']);<br>
-                &nbsp;&nbsp;curl_setopt($ch, CURLOPT_TIMEOUT, 5);<br>
-                }
+        <!-- SLIDE 2: THE BRAIN (monitor.php) -->
+        <div class="slide hidden flex flex-col h-full z-10">
+            <span class="text-sky-500 font-bold text-[10px] tracking-widest uppercase">File 01 // The Engine</span>
+            <h2 class="text-2xl font-extrabold mt-2 tracking-tight">monitor.php</h2>
+            <p class="text-[11px] text-slate-400 mt-2">The automated worker that pings your tech stack.</p>
+            <div class="my-auto glass p-4 rounded-2xl space-y-4">
+                <div class="space-y-1">
+                    <p class="text-[10px] text-sky-400 font-bold uppercase">Dual-Protocol Logic</p>
+                    <p class="text-[10px] text-slate-300">Checks Web URLs via cURL and Raw IPs (like 8.8.8.8) via Sockets.</p>
+                </div>
+                <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-[9px] code-font text-emerald-400 leading-relaxed">
+                    if (filter_var($url, FILTER_VALIDATE_IP)) {<br>
+                    &nbsp;&nbsp;$conn = @fsockopen($url, 53); <br>
+                    &nbsp;&nbsp;$status = $conn ? 'up' : 'down';<br>
+                    } else {<br>
+                    &nbsp;&nbsp;$ch = curl_init($url);<br>
+                    &nbsp;&nbsp;curl_exec($ch);<br>
+                    &nbsp;&nbsp;$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);<br>
+                    }
+                </div>
             </div>
         </div>
-        <div class="text-slate-500 text-lg text-center">Executes silently in the background</div>
-    </div>
 
-    <!-- SLIDE 4: THE PUBLIC DASHBOARD -->
-    <div class="slide">
-        <div>
-            <span class="text-blue-500 font-bold text-xl tracking-widest uppercase">Step 03 / User Interface</span>
-            <h2 class="text-4xl font-extrabold mt-3 tracking-tight">The Live Dashboard (`index.php`) 📊</h2>
-        </div>
-        <div class="space-y-5 text-xl bg-slate-900/80 p-8 rounded-3xl border border-slate-800 my-auto">
-            <p class="text-slate-300 font-medium leading-relaxed">Designed for ultimate transparency using Tailwind CSS grid layouts:</p>
-            <ul class="space-y-4">
-                <li class="flex items-start">⚡ <span class="ml-3"><strong class="text-white">Infrastructure Bucketing:</strong> Cleanly segments core backbone nodes from standard client applications.</span></li>
-                <li class="flex items-start">🚨 <span class="ml-3"><strong class="text-white">Emergency Banner:</strong> Dynamic PHP logic scans arrays and instantly banners active outages for visitors.</span></li>
-                <li class="flex items-start">📈 <span class="ml-3"><strong class="text-white">Active Incident Feed:</strong> Displays ongoing event summaries without cluttering past archives.</span></li>
-            </ul>
-        </div>
-        <div class="text-slate-500 text-lg text-center">Real-time status updates at a glance</div>
-    </div>
-
-    <!-- SLIDE 5: SECURE ADMIN CONTROL -->
-    <div class="slide">
-        <div>
-            <span class="text-blue-500 font-bold text-xl tracking-widest uppercase">Step 04 / Access Control</span>
-            <h2 class="text-4xl font-extrabold mt-3 tracking-tight">Secure Admin Panel (`admin_incidents.php`) 🛡️</h2>
-        </div>
-        <div class="space-y-5 text-xl bg-slate-900/80 p-8 rounded-3xl border border-slate-800 my-auto">
-            <p class="text-slate-300 font-medium leading-relaxed">Protect your incident response tools from unauthorized access:</p>
-            <ul class="space-y-4">
-                <li class="flex items-start">🔒 <span class="ml-3"><strong class="text-white">Session Security:</strong> Protected behind native PHP sessions and secure credential verification (`password_verify`).</span></li>
-                <li class="flex items-start">📝 <span class="ml-3"><strong class="text-white">Live Timeline Management:</strong> Engineers can append running update notes as technical resolutions unfold.</span></li>
-                <li class="flex items-start">✅ <span class="ml-3"><strong class="text-white">Status Lifecycle:</strong> Single-click incident closure writes timestamp data and shifts statuses to green.</span></li>
-            </ul>
-        </div>
-        <div class="text-slate-500 text-lg text-center">Restricted backend interface</div>
-    </div>
-
-    <!-- SLIDE 6: USER CREATION UTILITY -->
-    <div class="slide">
-        <div>
-            <span class="text-blue-500 font-bold text-xl tracking-widest uppercase">Step 05 / Administration</span>
-            <h2 class="text-4xl font-extrabold mt-3 tracking-tight">User Management (`create_user.php`) 👤</h2>
-        </div>
-        <div class="space-y-5 text-xl bg-slate-900/80 p-8 rounded-3xl border border-slate-800 my-auto">
-            <p class="text-slate-300 font-medium leading-relaxed">Safely onboard administrative team members without handling raw text strings:</p>
-            <ul class="space-y-4">
-                <li class="flex items-start">⚙️ <span class="ml-3"><strong class="text-white">Automated Hashing:</strong> Captures raw inputs and runs them through PHP default hashing before insertion.</span></li>
-                <li class="flex items-start">🛡️ <span class="ml-3"><strong class="text-white">Error Handling:</strong> Catch blocks gracefully manage duplicate usernames or database exceptions.</span></li>
-                <li class="flex items-start">💡 <span class="ml-3"><strong class="text-white">Best Practice:</strong> Delete this deployment script post-setup to prevent unauthorized account creation.</span></li>
-            </ul>
-        </div>
-        <div class="text-slate-500 text-lg text-center">Secure credential provisioning</div>
-    </div>
-
-    <!-- SLIDE 7: HISTORICAL ARCHIVE -->
-    <div class="slide">
-        <div>
-            <span class="text-blue-500 font-bold text-xl tracking-widest uppercase">Step 06 / Transparency</span>
-            <h2 class="text-4xl font-extrabold mt-3 tracking-tight">Historical Archive (`incidents.php`) 📜</h2>
-        </div>
-        <div class="space-y-5 text-xl bg-slate-900/80 p-8 rounded-3xl border border-slate-800 my-auto">
-            <p class="text-slate-300 font-medium leading-relaxed">Ensure historical accountability long after systems return to normal:</p>
-            <ul class="space-y-4">
-                <li class="flex items-start">📂 <span class="ml-3"><strong class="text-white">Complete Repository:</strong> Dedicated public log listing all past and present operational events.</span></li>
-                <li class="flex items-start">🎨 <span class="ml-3"><strong class="text-white">Visual Distinction:</strong> Amber indicators highlight active disruption, while green badges signify full resolution.</span></li>
-                <li class="flex items-start">🕒 <span class="ml-3"><strong class="text-white">Chronological Clarity:</strong> Displays exact start and end times synchronized to local BST intervals.</span></li>
-            </ul>
-        </div>
-        <div class="text-slate-500 text-lg text-center">Long-term reliability tracking</div>
-    </div>
-
-    <!-- SLIDE 8: AUTOMATION & OUTRO -->
-    <div class="slide">
-        <div>
-            <span class="text-emerald-400 font-bold text-xl tracking-widest uppercase">Step 07 / Automation</span>
-            <h2 class="text-4xl font-extrabold mt-3 tracking-tight">Set It & Forget It ⚙️</h2>
-        </div>
-        <div class="space-y-5 text-xl bg-slate-900/80 p-8 rounded-3xl border border-slate-800 my-auto">
-            <p class="text-slate-300 font-medium leading-relaxed">To make your status page truly autonomous, configure a Linux system Cron job to trigger your monitor script every single minute:</p>
-            <div class="bg-slate-950 p-6 rounded-2xl text-emerald-400 font-mono text-xl text-center border border-slate-800">
-                * * * * * php /var/www/status/monitor.php
+        <!-- SLIDE 3: THE UI (index.php) -->
+        <div class="slide hidden flex flex-col h-full z-10">
+            <span class="text-sky-500 font-bold text-[10px] tracking-widest uppercase">File 02 // Front-End</span>
+            <h2 class="text-2xl font-extrabold mt-2 tracking-tight">index.php</h2>
+            <div class="my-auto space-y-4">
+                <div class="glass p-4 rounded-2xl">
+                    <p class="text-[10px] text-sky-400 font-bold uppercase mb-2">Live Component Logic</p>
+                    <div class="flex items-start gap-3">
+                        <div class="w-1 h-12 bg-sky-500 rounded-full mt-1"></div>
+                        <p class="text-[11px] text-slate-300 leading-relaxed">Filters nodes into "Core" vs "Services". Pulls active incidents and triggers the red "Global Alert" banner if a failure is detected.</p>
+                    </div>
+                </div>
+                <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-[9px] code-font text-sky-300">
+                    foreach ($nodes as $n) {<br>
+                    &nbsp;&nbsp;if ($n['status'] === 'down') {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;echo "&lt;div class='alert'&gt;...&lt;/div&gt;";<br>
+                    &nbsp;&nbsp;}<br>
+                    }
+                </div>
             </div>
-            <p class="text-slate-400 text-lg text-center">Your infrastructure status updates seamlessly without manual human intervention.</p>
         </div>
-        <div class="text-center">
-            <p class="text-2xl font-bold text-blue-400">📌 Save this post if you found it useful!</p>
+
+        <!-- SLIDE 4: COMMAND (admin_incidents.php) -->
+        <div class="slide hidden flex flex-col h-full z-10">
+            <span class="text-sky-500 font-bold text-[10px] tracking-widest uppercase">File 03 // Management</span>
+            <h2 class="text-2xl font-extrabold mt-2 tracking-tight">admin_incidents.php</h2>
+            <div class="my-auto glass p-4 rounded-2xl space-y-4">
+                <div class="p-3 bg-sky-500/5 border border-sky-500/20 rounded-xl">
+                    <p class="text-[10px] text-white font-bold uppercase mb-1">Secure Auth</p>
+                    <p class="text-[10px] text-slate-400">Locked behind password_verify() sessions. Only verified staff can post updates.</p>
+                </div>
+                <div class="p-3 bg-slate-950/50 rounded-xl border border-slate-800">
+                    <p class="text-[10px] text-sky-300 font-bold uppercase mb-1">Timeline Control</p>
+                    <p class="text-[10px] text-slate-400">Post granular updates, add timestamps, and close incidents to shift page state to Green.</p>
+                </div>
+            </div>
         </div>
+
+        <!-- SLIDE 5: SECURITY (create_user.php) -->
+        <div class="slide hidden flex flex-col h-full z-10">
+            <span class="text-sky-500 font-bold text-[10px] tracking-widest uppercase">File 04 // Auth Layer</span>
+            <h2 class="text-2xl font-extrabold mt-2 tracking-tight">create_user.php</h2>
+            <div class="my-auto space-y-6">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-sky-500/20 blur-xl rounded-full"></div>
+                    <div class="glass p-5 rounded-2xl relative">
+                        <i class="fas fa-user-shield text-sky-400 text-2xl mb-3"></i>
+                        <h4 class="text-xs font-bold text-white mb-2">Cryptographic Hashing</h4>
+                        <p class="text-[10px] text-slate-400">Never store plain text. This script runs your admin password through the BCRYPT algorithm before it hits the DB.</p>
+                    </div>
+                </div>
+                <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-[10px] code-font text-indigo-400">
+                    $hashed = password_hash($pass, PASSWORD_DEFAULT);
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: HISTORY (incidents.php) -->
+        <div class="slide hidden flex flex-col h-full z-10">
+            <span class="text-sky-500 font-bold text-[10px] tracking-widest uppercase">File 05 // Transparency</span>
+            <h2 class="text-2xl font-extrabold mt-2 tracking-tight">incidents.php</h2>
+            <div class="my-auto glass p-5 rounded-2xl space-y-4 border-l-4 border-l-sky-500">
+                <p class="text-xs font-bold text-white">The Public Audit Trail</p>
+                <p class="text-[11px] text-slate-400 leading-relaxed">This page lists every past disruption. It pulls data from 'history' and 'incident_updates' to show users exactly how you fixed the issue.</p>
+                <div class="flex gap-2">
+                    <span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-[8px] font-bold rounded uppercase">Resolved Logs</span>
+                    <span class="px-2 py-1 bg-sky-500/20 text-sky-400 text-[8px] font-bold rounded uppercase">Timeline View</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: THE STACK (Unified View) -->
+        <div class="slide hidden flex flex-col h-full z-10">
+            <span class="text-sky-500 font-bold text-[10px] tracking-widest uppercase">System Design // Overview</span>
+            <h2 class="text-2xl font-extrabold mt-2 tracking-tight">The Tech Stack ⚡</h2>
+            <div class="my-auto space-y-2">
+                <div class="glass p-3 rounded-xl flex items-center justify-between">
+                    <span class="text-[11px] font-bold">Language</span>
+                    <span class="text-[11px] text-sky-400 font-mono">PHP 8.x</span>
+                </div>
+                <div class="glass p-3 rounded-xl flex items-center justify-between">
+                    <span class="text-[11px] font-bold">Database</span>
+                    <span class="text-[11px] text-sky-400 font-mono">MySQL (PDO)</span>
+                </div>
+                <div class="glass p-3 rounded-xl flex items-center justify-between">
+                    <span class="text-[11px] font-bold">Styling</span>
+                    <span class="text-[11px] text-sky-400 font-mono">Tailwind CSS</span>
+                </div>
+                <div class="glass p-3 rounded-xl flex items-center justify-between">
+                    <span class="text-[11px] font-bold">Icons</span>
+                    <span class="text-[11px] text-sky-400 font-mono">FontAwesome</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: AUTOMATION (Cron) -->
+        <div class="slide hidden flex flex-col h-full z-10">
+            <span class="text-emerald-500 font-bold text-[10px] tracking-widest uppercase">Last Step // Automation</span>
+            <h2 class="text-2xl font-extrabold mt-2 tracking-tight">Set It & Forget It</h2>
+            <div class="my-auto space-y-6">
+                <p class="text-[11px] text-slate-400 leading-relaxed">To make this live, your server needs a pulse. Configure a Linux Cron Job to trigger your monitoring engine every minute.</p>
+                <div class="bg-slate-950 p-4 rounded-xl border border-emerald-500/30 text-center">
+                    <p class="text-emerald-400 font-mono text-sm">* * * * * php monitor.php</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: THE FINAL LOOK -->
+        <div class="slide hidden flex flex-col h-full z-10">
+            <span class="text-sky-500 font-bold text-[10px] tracking-widest uppercase">Final Look // Deployment</span>
+            <h2 class="text-2xl font-extrabold mt-2 tracking-tight">Master Blueprint</h2>
+            <div class="my-auto grid grid-cols-2 gap-3">
+                <div class="glass p-3 rounded-xl">
+                    <p class="text-[9px] font-bold text-sky-400 uppercase mb-1">Public</p>
+                    <p class="text-[8px] text-slate-500 leading-tight">index.php<br>incidents.php</p>
+                </div>
+                <div class="glass p-3 rounded-xl">
+                    <p class="text-[9px] font-bold text-amber-400 uppercase mb-1">Private</p>
+                    <p class="text-[8px] text-slate-500 leading-tight">admin.php<br>monitor.php</p>
+                </div>
+                <div class="col-span-2 glass p-4 rounded-2xl flex items-center gap-4">
+                    <div class="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-check-double text-emerald-500"></i>
+                    </div>
+                    <div>
+                        <p class="text-[11px] font-bold">100% Operational</p>
+                        <p class="text-[9px] text-slate-500">Real-time telemetry established.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: CTA -->
+        <div class="slide hidden flex flex-col h-full justify-between z-10">
+            <div></div>
+            <div class="text-center space-y-4">
+                <h2 class="text-3xl font-black italic tracking-tighter">BUILD THE<br><span class="neon-text">FUTURE.</span></h2>
+                <p class="text-xs text-slate-400">Infrastructure transparency matters.</p>
+            </div>
+            <div class="space-y-3">
+                <div class="glass p-4 rounded-2xl text-center">
+                    <p class="text-[10px] font-bold text-sky-400">📌 SAVE FOR YOUR NEXT HOMELAB PROJECT</p>
+                </div>
+                <p class="text-center text-[10px] text-slate-600 font-mono">Axial Studio Architecture // TechGrid</p>
+            </div>
+        </div>
+
     </div>
 
+    <!-- Controls -->
+    <div class="w-full max-w-md flex justify-between mt-6 px-4">
+        <button onclick="move(-1)" class="w-12 h-12 glass rounded-full flex items-center justify-center text-sky-400 hover:bg-sky-500/10 transition">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button onclick="move(1)" class="px-8 h-12 glass rounded-full flex items-center justify-center text-sky-400 font-bold text-xs tracking-widest uppercase hover:bg-sky-500/10 transition">
+            Next Page
+        </button>
+    </div>
+
+    <script>
+        let idx = 0;
+        const slides = document.querySelectorAll('.slide');
+        const counter = document.getElementById('counter');
+
+        function move(dir) {
+            slides[idx].classList.add('hidden');
+            idx = (idx + dir + slides.length) % slides.length;
+            slides[idx].classList.remove('hidden');
+            counter.innerText = `${(idx + 1).toString().padStart(2, '0')} / 10`;
+        }
+    </script>
 </body>
 </html>
+
