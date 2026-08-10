@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Techgrid Systems | Blueprint - Assessment Hub</title>
+    <title>Techgrid Systems | Assessment Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -19,7 +19,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; }
         .view { display: none; }
         .view.active { display: flex; } 
         .fade-in { animation: fadeIn 0.4s ease-out; }
@@ -28,297 +28,145 @@
         #user-dropdown.show { display: block; }
         .content-area { padding-top: 100px; }
         .bg-arc-gradient { background: radial-gradient(circle at top left, #004a99 0%, #002d5e 100%); }
-        
-        /* Mobile Frame Simulator Container Styling matching blueprint layouts */
-        .blueprint-container {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }
-        .phone-mockup {
-            width: 100%;
-            max-width: 420px;
-            height: 850px;
-            background: #ffffff;
-            color: #0f172a;
-            border-radius: 3rem;
-            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.5), 0 0 0 12px #1e293b;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-        }
-        .phone-mockup-content {
-            flex: 1;
-            overflow-y: auto;
-            position: relative;
-        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center font-sans">
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans text-left">
 
-    <!-- Blueprint TikTok/Mobile Frame Wrapper -->
-    <div class="blueprint-container">
-        
-        <!-- Header Controls for Blueprint Context -->
-        <div class="mb-6 text-center">
-            <span class="bg-arc-blue/30 text-arc-teal border border-arc-teal/30 text-xs font-black uppercase tracking-[0.3em] px-4 py-1.5 rounded-full">
-                Blueprint Architecture Mode: Mobile App Frame
-            </span>
+    <!-- Navigation -->
+    <nav id="global-nav" class="hidden fixed top-0 left-0 w-full bg-white/95 backdrop-blur-xl z-50 border-b border-slate-100 px-6 py-4 shadow-sm text-left">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4 text-left">
+                <img src="arc.jpg" alt="Logo" class="h-10 w-auto object-contain" onerror="this.src='https://placehold.co/150x40?text=Techgrid+Systems'">
+                <div class="h-6 w-[1px] bg-slate-200 hidden md:block"></div>
+                <span class="text-arc-blue font-black uppercase tracking-[0.2em] text-[10px] hidden md:block">Techgrid Systems Exam Centre</span>
+            </div>
+            <div class="relative text-left">
+                <button onclick="toggleUserDropdown()" class="bg-white border border-slate-200 rounded-2xl px-4 py-2 shadow-sm flex items-center gap-3 hover:border-arc-teal transition-all group">
+                    <div id="nav-user-initial" class="w-8 h-8 rounded-xl bg-arc-blue flex items-center justify-center text-white text-sm font-black uppercase">U</div>
+                    <div class="text-left hidden sm:block">
+                        <p id="nav-display-email" class="text-slate-800 font-black text-xs truncate max-w-[150px]">email@example.com</p>
+                    </div>
+                    <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-hover:text-arc-blue"></i>
+                </button>
+                <div id="user-dropdown" class="absolute right-0 mt-3 w-64 bg-white border border-slate-100 rounded-3xl shadow-2xl z-50 overflow-hidden fade-in text-left">
+                    <div class="p-5 border-b border-slate-50 bg-slate-50/50 text-left">
+                        <p id="dropdown-full-name" class="text-slate-900 font-black truncate text-sm">Candidate Name</p>
+                        <p id="dropdown-email" class="text-slate-500 text-[10px] uppercase font-bold tracking-wider truncate">email@example.com</p>
+                    </div>
+                    <div class="p-2"><button onclick="location.reload()" class="w-full flex items-center gap-3 p-4 text-red-600 text-sm font-bold hover:bg-red-50 rounded-2xl transition-colors"><i data-lucide="log-out" class="w-4 h-4"></i> Sign Out & Exit</button></div>
+                </div>
+            </div>
         </div>
+    </nav>
 
-        <!-- Phone Device Mockup Frame -->
-        <div class="phone-mockup">
-            
-            <!-- Navigation Inside Phone Frame -->
-            <nav id="global-nav" class="hidden absolute top-0 left-0 w-full bg-white/95 backdrop-blur-xl z-50 border-b border-slate-100 px-4 py-3 shadow-sm text-left">
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center gap-2 text-left">
-                        <img src="arc.jpg" alt="Logo" class="h-7 w-auto object-contain" onerror="this.src='https://placehold.co/120x35?text=TGS'">
-                        <div class="h-4 w-[1px] bg-slate-200"></div>
-                        <span class="text-arc-blue font-black uppercase tracking-[0.1em] text-[9px]">Exam Hub</span>
+    <!-- 1. Registration View -->
+    <div id="view-registration" class="view active flex-1 flex-col items-center justify-center p-6 bg-arc-gradient">
+        <div class="max-w-4xl w-full bg-white rounded-[3.5rem] shadow-2xl p-10 md:p-20 border border-white/20 mb-16 fade-in text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-arc-blue to-arc-teal"></div>
+            <div class="mb-14 text-center">
+                <div class="flex justify-center mb-10"><img src="arc.jpg" alt="TGS Logo" class="h-24 w-auto object-contain" onerror="this.src='https://placehold.co/400x120?text=Techgrid+Systems'"></div>
+                <h1 class="text-5xl font-black text-slate-900 tracking-tighter mb-4 uppercase leading-tight">Techgrid Systems Exam Centre</h1>
+                <p class="text-slate-500 text-xl leading-relaxed max-w-2xl mx-auto font-medium">Identify yourself to begin or resume your technical assessment modules.</p>
+            </div>
+            <form onsubmit="handlePortalLogin(event)" class="space-y-10 text-left">
+                <div class="grid md:grid-cols-2 gap-10">
+                    <div class="space-y-3">
+                        <label class="block text-[10px] font-black text-arc-blue uppercase tracking-[0.3em] ml-1 text-left">Full Identity</label>
+                        <input required type="text" id="user-name" placeholder="John Doe" class="w-full bg-slate-50 border-2 border-slate-100 rounded-3xl py-6 px-8 focus:outline-none focus:border-arc-teal font-bold text-slate-800 text-lg shadow-inner transition-all">
                     </div>
-                    <div class="relative text-left">
-                        <button onclick="toggleUserDropdown()" class="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 shadow-sm flex items-center gap-2 hover:border-arc-teal transition-all">
-                            <div id="nav-user-initial" class="w-6 h-6 rounded-lg bg-arc-blue flex items-center justify-center text-white text-xs font-black uppercase">U</div>
-                            <i data-lucide="chevron-down" class="w-3 h-3 text-slate-400"></i>
-                        </button>
-                        <div id="user-dropdown" class="absolute right-0 mt-2 w-56 bg-white border border-slate-100 rounded-2xl shadow-2xl z-50 overflow-hidden fade-in text-left">
-                            <div class="p-4 border-b border-slate-50 bg-slate-50/50 text-left">
-                                <p id="dropdown-full-name" class="text-slate-900 font-black truncate text-xs">Candidate Name</p>
-                                <p id="dropdown-email" class="text-slate-500 text-[9px] uppercase font-bold tracking-wider truncate">email@example.com</p>
-                            </div>
-                            <div class="p-2"><button onclick="location.reload()" class="w-full flex items-center gap-2 p-2.5 text-red-600 text-xs font-bold hover:bg-red-50 rounded-xl transition-colors"><i data-lucide="log-out" class="w-3.5 h-3.5"></i> Sign Out & Exit</button></div>
-                        </div>
+                    <div class="space-y-3">
+                        <label class="block text-[10px] font-black text-arc-blue uppercase tracking-[0.3em] ml-1 text-left">Work Email</label>
+                        <input required type="email" id="user-email" placeholder="email@address.com" class="w-full bg-slate-50 border-2 border-slate-100 rounded-3xl py-6 px-8 focus:outline-none focus:border-arc-teal font-bold text-slate-800 text-lg shadow-inner transition-all">
                     </div>
                 </div>
-            </nav>
-
-            <div class="phone-mockup-content">
-                <!-- 1. Registration View -->
-                <div id="view-registration" class="view active min-h-full flex-col items-center justify-center p-6 bg-arc-gradient text-white">
-                    <div class="w-full bg-white text-slate-900 rounded-[2.5rem] shadow-2xl p-6 border border-white/20 fade-in text-center relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-arc-blue to-arc-teal"></div>
-                        <div class="mb-6 text-center">
-                            <div class="flex justify-center mb-4"><img src="arc.jpg" alt="TGS Logo" class="h-14 w-auto object-contain" onerror="this.src='https://placehold.co/200x60?text=Techgrid'"></div>
-                            <h1 class="text-2xl font-black text-slate-900 tracking-tighter mb-2 uppercase leading-tight">Exam Centre</h1>
-                            <p class="text-slate-500 text-xs leading-relaxed font-medium">Identify yourself to begin your modules.</p>
-                        </div>
-                        <form onsubmit="handlePortalLogin(event)" class="space-y-4 text-left">
-                            <div class="space-y-1">
-                                <label class="block text-[9px] font-black text-arc-blue uppercase tracking-[0.2em] ml-1">Full Identity</label>
-                                <input required type="text" id="user-name" placeholder="John Doe" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-3 px-4 focus:outline-none focus:border-arc-teal font-bold text-slate-800 text-sm shadow-inner transition-all">
-                            </div>
-                            <div class="space-y-1">
-                                <label class="block text-[9px] font-black text-arc-blue uppercase tracking-[0.2em] ml-1">Work Email</label>
-                                <input required type="email" id="user-email" placeholder="email@address.com" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-3 px-4 focus:outline-none focus:border-arc-teal font-bold text-slate-800 text-sm shadow-inner transition-all">
-                            </div>
-                            <button type="submit" class="w-full bg-arc-blue text-white py-4 rounded-2xl font-black text-base hover:bg-arc-dark transition-all shadow-xl flex items-center justify-center gap-2 mt-2">
-                                Initialize Access <i data-lucide="chevron-right" class="w-5 h-5"></i>
-                            </button>
-                        </form>
-                    </div>
+                <button type="submit" class="w-full bg-arc-blue text-white py-7 rounded-[2rem] font-black text-2xl hover:bg-arc-dark transition-all shadow-2xl flex items-center justify-center gap-5 mt-6">
+                    Initialize Access <i data-lucide="chevron-right" class="w-8 h-8"></i>
+                </button>
+            </form>
+        </div>
+        
+        <div class="text-center text-white/60 text-sm leading-relaxed max-w-5xl fade-in pb-12">
+            <p class="font-black mb-8 text-arc-teal uppercase tracking-[0.4em] text-[11px]">Technical Support Gateway</p>
+            <div class="flex flex-col md:flex-row justify-center gap-x-20 gap-y-10 text-left">
+                <div class="text-left">
+                    <p class="text-[10px] font-black uppercase text-arc-teal tracking-widest">Technical Engineer</p>
+                    <a href="mailto:aayliffe@techgrid-systems.org.uk" class="flex items-center gap-3 font-bold text-white hover:underline"><i data-lucide="mail" class="w-4 h-4"></i>aayliffe@techgrid-systems.org.uk</a>
                 </div>
-
-                <!-- 2. Dashboard View -->
-                <div id="view-dashboard" class="view flex-col min-h-full px-6 pt-16 pb-12 text-left bg-slate-50">
-                    <header class="mb-6 fade-in text-left">
-                        <h1 class="text-3xl font-black text-slate-900 tracking-tighter flex items-center gap-3 leading-tight"><i data-lucide="terminal" class="text-arc-blue w-8 h-8"></i> Dashboard</h1>
-                        <p class="text-slate-500 mt-2 text-xs font-medium leading-relaxed">Welcome back, <span id="display-name" class="text-arc-blue font-black underline decoration-arc-teal decoration-2 underline-offset-4">Candidate</span>.</p>
-                    </header>
-                    <div id="level-list" class="grid gap-4 w-full fade-in text-left"></div>
-                </div>
-
-                <!-- 3. Intro View -->
-                <div id="view-intro" class="view min-h-full flex-col items-center justify-center p-6 pt-16 pb-12 text-left bg-slate-50">
-                    <div class="w-full flex flex-col fade-in">
-                        <button onclick="showDashboard()" class="flex items-center gap-2 text-slate-400 hover:text-arc-blue font-black mb-6 transition-colors self-start text-[10px] uppercase tracking-[0.2em]"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back</button>
-                        <div id="intro-content" class="bg-white rounded-3xl p-6 border border-slate-100 shadow-xl relative overflow-hidden text-left"></div>
-                    </div>
-                </div>
-
-                <!-- 4. Exam View -->
-                <div id="view-exam" class="view min-h-full flex-col items-center p-6 pt-16 pb-12 text-left bg-slate-50">
-                    <div class="w-full fade-in flex flex-col h-full">
-                        <div class="flex justify-between items-end mb-6 text-left">
-                            <div class="flex-1 mr-4 text-left">
-                                <h2 class="text-[9px] font-black text-arc-blue uppercase tracking-[0.3em] mb-2">Validation Protocol</h2>
-                                <div class="h-3 w-full bg-slate-200 rounded-full overflow-hidden shadow-inner border-2 border-white">
-                                    <div id="exam-progress-bar" class="h-full bg-gradient-to-r from-arc-blue to-arc-teal transition-all duration-700"></div>
-                                </div>
-                            </div>
-                            <div id="exam-counter" class="bg-white px-4 py-2 rounded-xl border border-slate-100 font-black text-arc-blue shadow-md text-xs">1 / 15</div>
-                        </div>
-                        <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 relative overflow-hidden text-left flex-1 flex flex-col justify-between">
-                            <div class="absolute top-0 left-0 w-2 h-full bg-arc-blue"></div>
-                            <div>
-                                <h3 id="question-text" class="text-lg font-bold text-slate-900 mb-6 leading-snug text-left">...</h3>
-                                <div id="options-container" class="grid gap-3 text-left"></div>
-                            </div>
-                            <div class="mt-8 pt-4 border-t border-slate-100 flex justify-between items-center text-left">
-                                <p class="text-[10px] font-black uppercase tracking-wider text-slate-400 truncate max-w-[120px]" id="candidate-footer-name">...</p>
-                                <button id="next-btn" disabled class="bg-arc-blue text-white px-6 py-3 rounded-xl font-black hover:bg-arc-dark transition-all flex items-center gap-2 text-xs">
-                                    <span id="next-btn-text">Validate</span> <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 5. Processing View -->
-                <div id="view-processing" class="view min-h-full items-center justify-center p-6 text-center bg-white">
-                    <div class="text-center space-y-6">
-                        <div class="relative inline-block scale-150">
-                            <div class="w-12 h-12 border-[4px] border-arc-blue/10 rounded-full"></div>
-                            <div class="w-12 h-12 border-[4px] border-arc-teal border-t-transparent rounded-full animate-spin absolute top-0"></div>
-                        </div>
-                        <h3 class="text-3xl font-black text-slate-900 tracking-tighter uppercase">Syncing</h3>
-                        <p class="text-arc-blue font-black uppercase tracking-[0.2em] text-[10px]">Transmitting records...</p>
-                    </div>
-                </div>
-
-                <!-- 6. Success View -->
-                <div id="view-success" class="view min-h-full items-center justify-center p-6 text-center bg-slate-50">
-                    <div class="bg-white rounded-3xl shadow-xl p-8 max-w-sm w-full text-center border border-slate-50 fade-in">
-                        <div class="flex justify-center mb-6"><div class="bg-indigo-50 p-6 rounded-full"><i data-lucide="send" class="w-10 h-10 text-indigo-500"></i></div></div>
-                        <h3 class="text-2xl font-black text-slate-900 tracking-tighter uppercase leading-none mb-3">Awaiting Results</h3>
-                        <p class="text-slate-500 text-xs font-medium leading-relaxed mb-6">Assessment transmitted successfully to your examiner.</p>
-                        <button onclick="showDashboard()" class="w-full bg-arc-blue text-white py-4 rounded-2xl text-sm font-black hover:bg-arc-dark transition-all shadow-lg flex items-center justify-center gap-2">Return to Hub <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
-                    </div>
+                <div class="text-left">
+                    <p class="text-[10px] font-black uppercase text-arc-teal tracking-widest">Service Desk Manager</p>
+                    <a href="mailto:aayliffe@techgrid-systems.org.uk" class="flex items-center gap-3 font-bold text-white hover:underline"><i data-lucide="mail" class="w-4 h-4"></i> aayliffe@techgrid-systems.org.uk</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxYyFFfpUeSJh0t9YvxKtQCyKSKQjUd0UJqa5EBVo-UT7vigh6xOyBCft-oEvKFWL9M/exec";
+    <!-- 2. Dashboard View -->
+    <div id="view-dashboard" class="view flex-col min-h-screen max-w-6xl mx-auto px-8 content-area pb-24 text-left">
+        <header class="mb-16 fade-in text-left">
+            <h1 class="text-7xl font-black text-slate-900 tracking-tighter flex items-center gap-6 leading-tight text-left"><i data-lucide="terminal" class="text-arc-blue w-20 h-20"></i> Dashboard</h1>
+            <p class="text-slate-500 mt-8 text-2xl font-medium leading-relaxed max-w-2xl text-left">Welcome back, <span id="display-name" class="text-arc-blue font-black underline decoration-arc-teal decoration-4 underline-offset-8">Candidate</span>. <br>Initiate authorized assessment modules below.</p>
+        </header>
+        <div id="level-list" class="grid gap-12 w-full mb-32 fade-in text-left"></div>
+    </div>
 
-        const EXAM_DATA = {
-            1: { title: "1st Line Engineering", icon: "cpu", description: "Assessment of initial technical aptitude and desktop support.", objectives: ["Diagnostics", "OS Navigation", "Basic Connectivity"], passScore: 80, questions: [{ id: 1, text: "Which component is often referred to as the 'brain' of the computer?", options: ["RAM", "Hard Drive", "CPU", "Power Supply"], correct: 2 }, { id: 2, text: "What does RAM stand for?", options: ["Random Access Memory", "Readily Available Memory", "Remote Access Module", "Rapid Analysis Method"], correct: 0 }, { id: 3, text: "Which of these is a common operating system developed by Microsoft?", options: ["macOS", "Linux", "Windows", "Android"], correct: 2 }, { id: 4, text: "What is the primary function of a GPU?", options: ["Storing files", "Processing graphics/images", "Connecting to the internet", "Managing power"], correct: 1 }, { id: 5, text: "Which port is most commonly used to connect a mouse or keyboard today?", options: ["VGA", "Serial", "USB", "Parallel"], correct: 2 }] },
-            2: { title: "2nd Line Engineering", icon: "network", description: "Intermediate evaluation focusing on networking and security.", objectives: ["IP Subnetting", "DNS/DHCP Config", "Security"], passScore: 80, questions: [{ id: 1, text: "What protocol is used to securely browse the web?", options: ["HTTP", "FTP", "HTTPS", "SMTP"], correct: 2 }, { id: 2, text: "What is the purpose of DNS?", options: ["Emails", "IP Mapping", "WiFi Security", "RAM"], correct: 1 }, { id: 3, text: "Loopback address?", options: ["192.168.1.1", "127.0.0.1", "10.0.0.1", "8.8.8.8"], correct: 1 }] },
-            3: { title: "3rd Line & Escalations", icon: "award", description: "Advanced assessment for enterprise infrastructure.", objectives: ["Topology", "AES Standards", "Disaster Recovery"], passScore: 80, questions: [{ id: 1, text: "Symmetric encryption?", options: ["RSA", "ECC", "AES", "DH"], correct: 2 }, { id: 2, text: "Docker container?", options: ["Hardware", "Standalone package", "Shipping unit", "Database"], correct: 1 }] }
-        };
+    <!-- 3. Intro View -->
+    <div id="view-intro" class="view min-h-screen flex-col items-center justify-center p-6 content-area pb-20 text-left">
+        <div class="max-w-5xl w-full flex flex-col fade-in">
+            <button onclick="showDashboard()" class="flex items-center gap-3 text-slate-400 hover:text-arc-blue font-black mb-10 transition-colors self-start text-sm uppercase tracking-[0.4em]"><i data-lucide="arrow-left" class="w-5 h-5"></i> Back to Overview</button>
+            <div id="intro-content" class="bg-white rounded-[4.5rem] p-12 md:p-24 border border-slate-100 shadow-2xl relative overflow-hidden text-left"></div>
+        </div>
+    </div>
 
-        let state = { userInfo: { name: '', email: '' }, completedLevels: [], activeLevelId: null, currentQuestionIndex: 0, answers: {} };
-
-        function switchView(viewId) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(`view-${viewId}`).classList.add('active');
-            const nav = document.getElementById('global-nav');
-            if (viewId === 'registration' || viewId === 'processing') nav.classList.add('hidden');
-            else nav.classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        function toggleUserDropdown() { document.getElementById('user-dropdown').classList.toggle('show'); }
-
-        function handlePortalLogin(e) {
-            e.preventDefault();
-            state.userInfo.name = document.getElementById('user-name').value.trim();
-            state.userInfo.email = document.getElementById('user-email').value.trim().toLowerCase();
-            
-            const saved = localStorage.getItem(`arc_progress_${state.userInfo.email}`);
-            if (saved) state.completedLevels = JSON.parse(saved);
-            
-            document.getElementById('display-name').textContent = state.userInfo.name;
-            document.getElementById('dropdown-full-name').textContent = state.userInfo.name;
-            document.getElementById('dropdown-email').textContent = state.userInfo.email;
-            document.getElementById('nav-user-initial').textContent = state.userInfo.name[0].toUpperCase();
-            document.getElementById('candidate-footer-name').textContent = state.userInfo.name;
-            
-            showDashboard();
-        }
-
-        function showDashboard() {
-            const list = document.getElementById('level-list'); list.innerHTML = '';
-            const urlParams = new URLSearchParams(window.location.search);
-            const queryLevel = parseInt(urlParams.get('level')) || 1;
-            const visibleLevels = new Set([1, queryLevel, ...state.completedLevels]);
-
-            [1, 2, 3].forEach(id => {
-                if (!visibleLevels.has(id)) return;
-                const data = EXAM_DATA[id]; const isCompleted = state.completedLevels.includes(id);
-                const card = document.createElement('div');
-                card.className = `bg-white border border-slate-100 rounded-2xl p-4 flex items-center justify-between hover:shadow-md transition-all cursor-pointer group fade-in text-left`;
-                card.onclick = () => showIntro(id);
-                card.innerHTML = `<div class="flex items-center gap-3 text-left"><div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isCompleted ? 'bg-emerald-50 text-emerald-600' : 'bg-arc-blue/5 text-arc-blue'}"><i data-lucide="${isCompleted ? 'check-circle' : data.icon}" class="w-5 h-5"></i></div><div class="text-left"><h2 class="text-sm font-black text-slate-900">${data.title}</h2><p class="text-slate-400 text-[10px] mt-0.5 line-clamp-1">${data.description}</p></div></div><div class="flex items-center gap-1 text-arc-blue font-black uppercase tracking-widest text-[9px]"><i data-lucide="arrow-right" class="w-4 h-4"></i></div>`;
-                list.appendChild(card);
-            });
-            switchView('dashboard');
-        }
-
-        function showIntro(id) {
-            state.activeLevelId = id; const level = EXAM_DATA[id];
-            document.getElementById('intro-content').innerHTML = `
-                <h1 class="text-xl font-black text-slate-900 mb-2 leading-tight">${level.title}</h1>
-                <p class="text-xs text-slate-500 mb-4 leading-relaxed font-medium">${level.description}</p>
-                <div class="mb-6">
-                    <h4 class="font-black text-[9px] text-arc-blue uppercase tracking-widest mb-2">Objectives</h4>
-                    <ul class="space-y-1.5">${level.objectives.map(o => `<li class="flex items-center gap-2 text-slate-600 font-bold text-xs"><div class="w-1.5 h-1.5 bg-arc-teal rounded-full shrink-0"></div> ${o}</li>`).join('')}</ul>
+    <!-- 4. Exam View -->
+    <div id="view-exam" class="view min-h-screen flex-col items-center p-8 md:p-16 content-area pb-20 text-left">
+        <div class="max-w-5xl w-full fade-in">
+            <div class="flex justify-between items-end mb-12 text-left">
+                <div class="flex-1 mr-16 text-left">
+                    <h2 class="text-[11px] font-black text-arc-blue uppercase tracking-[0.6em] mb-5">Validation Protocol</h2>
+                    <div class="h-5 w-full bg-slate-200 rounded-full overflow-hidden shadow-inner border-4 border-white text-left">
+                        <div id="exam-progress-bar" class="h-full bg-gradient-to-r from-arc-blue to-arc-teal transition-all duration-700"></div>
+                    </div>
                 </div>
-                <button onclick="startExam()" class="w-full bg-slate-900 text-white py-3.5 rounded-xl text-xs font-black hover:bg-arc-blue transition-all shadow-lg">Initiate Assessment</button>
-            `;
-            switchView('intro');
-        }
+                <div id="exam-counter" class="bg-white px-10 py-5 rounded-[2rem] border border-slate-100 font-black text-arc-blue shadow-xl text-2xl">1 / 15</div>
+            </div>
+            <div class="bg-white rounded-[4.5rem] shadow-2xl border border-slate-100 p-12 md:p-24 relative overflow-hidden text-left">
+                <div class="absolute top-0 left-0 w-4 h-full bg-arc-blue"></div>
+                <h3 id="question-text" class="text-4xl font-bold text-slate-900 mb-20 leading-[1.15] text-left">...</h3>
+                <div id="options-container" class="grid gap-6 text-left"></div>
+                <div class="mt-24 pt-14 border-t border-slate-100 flex justify-between items-center text-left">
+                    <div class="flex items-center gap-4 text-slate-400 text-left">
+                        <div class="w-3.5 h-3.5 bg-arc-teal rounded-full animate-pulse"></div>
+                        <p class="text-sm font-black uppercase tracking-[0.2em] text-slate-500">Session ID: <span id="candidate-footer-name" class="text-arc-blue font-black underline underline-offset-8">...</span></p>
+                    </div>
+                    <button id="next-btn" disabled class="bg-arc-blue text-white px-16 py-7 rounded-[2rem] font-black hover:bg-arc-dark transition-all flex items-center gap-5 text-2xl group">
+                        <span id="next-btn-text">Validate Answer</span> <i data-lucide="chevron-right" class="w-8 h-8"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        function startExam() { state.currentQuestionIndex = 0; state.answers = {}; renderQuestion(); switchView('exam'); }
+    <!-- 5. Processing View -->
+    <div id="view-processing" class="view min-h-screen items-center justify-center p-4 text-center">
+        <div class="text-center space-y-12">
+            <div class="relative inline-block scale-[2.5]">
+                <div class="w-16 h-16 border-[6px] border-arc-blue/10 rounded-full"></div>
+                <div class="w-16 h-16 border-[6px] border-arc-teal border-t-transparent rounded-full animate-spin absolute top-0 text-center"></div>
+            </div>
+            <h3 class="text-6xl font-black text-slate-900 tracking-tighter uppercase">Syncing</h3>
+            <p class="text-arc-blue font-black uppercase tracking-[0.5em] text-sm text-center">Transmitting results to enterprise records...</p>
+        </div>
+    </div>
 
-        function renderQuestion() {
-            const level = EXAM_DATA[state.activeLevelId]; const q = level.questions[state.currentQuestionIndex];
-            document.getElementById('exam-counter').textContent = `${state.currentQuestionIndex + 1} / ${level.questions.length}`;
-            document.getElementById('exam-progress-bar').style.width = `${((state.currentQuestionIndex + 1) / level.questions.length) * 100}%`;
-            document.getElementById('question-text').textContent = q.text;
-            const box = document.getElementById('options-container'); box.innerHTML = '';
-            q.options.forEach((opt, i) => {
-                const btn = document.createElement('button');
-                btn.className = `group w-full text-left p-3.5 rounded-2xl border transition-all flex items-center justify-between text-xs font-bold ${state.answers[state.currentQuestionIndex] === i ? 'border-arc-blue bg-arc-blue/5 text-arc-blue' : 'border-slate-100 hover:border-arc-teal bg-white text-slate-700 shadow-sm'}`;
-                btn.onclick = () => { state.answers[state.currentQuestionIndex] = i; renderQuestion(); };
-                btn.innerHTML = `<span>${opt}</span><div class="w-4 h-4 rounded-full border-2 shrink-0 ${state.answers[state.currentQuestionIndex] === i ? 'bg-arc-blue border-arc-blue' : 'border-slate-200'}"></div>`;
-                box.appendChild(btn);
-            });
-            const nextBtn = document.getElementById('next-btn'); 
-            nextBtn.disabled = state.answers[state.currentQuestionIndex] === undefined;
-            const isLast = state.currentQuestionIndex === level.questions.length - 1;
-            document.getElementById('next-btn-text').textContent = isLast ? "Submit" : "Next";
-            nextBtn.onclick = () => { if (state.currentQuestionIndex < level.questions.length - 1) { state.currentQuestionIndex++; renderQuestion(); } else { submitFinal(); } };
-        }
+    <!-- 6. Success / Awaiting View -->
+    <div id="view-success" class="view min-h-screen items-center justify-center p-4 content-area pb-20 text-center">
+        <div class="bg-white rounded-[5rem] shadow-2xl p-12 md:p-28 max-w-4xl w-full text-center border border-slate-50 fade-in">
+            <div class="flex justify-center mb-12"><div class="bg-indigo-50 p-12 rounded-full"><i data-lucide="send" class="w-24 h-24 text-indigo-500"></i></div></div>
+            <h3 class="text-6xl font-black text-slate-900 tracking-tighter uppercase leading-none mb-6">Awaiting Results</h3>
+            <p class="text-slate-500 text-3xl font-medium max-w-2xl mx-auto leading-relaxed mb-16">Assessment transmitted. Your examiner (Daniel or Adam) will review your performance and provide the authorization link for the next tier.</p>
+            <button onclick="showDashboard()" class="w-full bg-arc-blue text-white py-8 rounded-[2.5rem] text-3xl font-black hover:bg-arc-dark transition-all shadow-2xl flex items-center justify-center gap-6">Return to Hub <i data-lucide="arrow-right" class="w-10 h-10"></i></button>
+        </div>
+    </div>
 
-        async function submitFinal() {
-            switchView('processing');
-            const level = EXAM_DATA[state.activeLevelId];
-            let correct = 0; let details = [];
-            level.questions.forEach((q, i) => { 
-                const ans = state.answers[i];
-                if (ans === q.correct) correct++;
-                details.push({ q: q.text, a: q.options[ans] || 'Skipped', status: (ans === q.correct ? 'Correct' : 'Incorrect') });
-            });
-            const score = Math.round((correct / level.questions.length) * 100);
-            const passed = score >= 80;
-
-            const payload = { 
-                candidateName: state.userInfo.name, 
-                candidateEmail: state.userInfo.email, 
-                levelTitle: level.title, 
-                score: score + "%", 
-                status: passed ? "PASSED" : "FAILED", 
-                timestamp: new Date().toLocaleString(),
-                details: JSON.stringify(details)
-            };
-
-            try {
-                await fetch(WEBHOOK_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (passed) {
-                    if (!state.completedLevels.includes(state.activeLevelId)) state.completedLevels.push(state.activeLevelId);
-                    localStorage.setItem(`arc_progress_${state.userInfo.email}`, JSON.stringify(state.completedLevels));
-                }
-                switchView('success');
-            } catch (err) { switchView('success'); }
-        }
-
-        window.onload = () => lucide.createIcons();
-    </script>
-</body>
-</html>
+    <script>
+        const WEBHOOK_URL = "
