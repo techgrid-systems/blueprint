@@ -169,4 +169,30 @@
     </div>
 
     <script>
-        const WEBHOOK_URL = "
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('user-dropdown');
+            dropdown.classList.toggle('show');
+        }
+        function showDashboard() {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-dashboard').classList.add('active');
+            document.getElementById('global-nav').classList.remove('hidden');
+            if (window.lucide) lucide.createIcons();
+        }
+        function handlePortalLogin(event) {
+            event.preventDefault();
+            const name = document.getElementById('user-name').value;
+            const email = document.getElementById('user-email').value;
+            document.getElementById('display-name').innerText = name;
+            document.getElementById('dropdown-full-name').innerText = name;
+            document.getElementById('dropdown-email').innerText = email;
+            document.getElementById('nav-display-email').innerText = email;
+            document.getElementById('nav-user-initial').innerText = name.charAt(0).toUpperCase();
+            showDashboard();
+        }
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
