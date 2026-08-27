@@ -1,499 +1,1813 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full bg-slate-50">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TechGrid Systems // Integrated Enterprise Architecture Blueprint</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .font-mono { font-family: 'Fira Code', monospace; }
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #0b101d; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #334155; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enterprise 12-Server Topology & Deployment Explorer</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#035485',
+              900: '#0c2e4e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Required custom chart container styling */
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 550px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 260px;
+      max-height: 320px;
+    }
+    @media (min-width: 768px) {
+      .chart-container {
+        height: 290px;
+      }
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .flow-line-active {
+      border-color: #0284c7 !important;
+      background-color: #e0effe !important;
+      color: #0369a1 !important;
+    }
+  </style>
 </head>
-<body class="bg-[#0b101d] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-teal-500 selection:text-white">
+<body class="h-full flex flex-col font-sans text-slate-800 bg-slate-50 antialiased selection:bg-sky-500 selection:text-white">
 
-    <header class="border-b border-slate-800 bg-[#0f172a]/80 backdrop-blur sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+  <!-- Chosen Palette: Slate & Warm Slate with Emerald and Indigo Accents -->
+  <!-- Application Structure Plan:
+       The application is structured as a single-page interactive management dashboard designed for enterprise system administrators and IT architects.
+       1. Top Header & Nav Bar: Quick navigation across operational views (Topology Explorer, Tier Guides, Port Matrix, IP Allocator, Deployment Checklist, Dynamic Connectivity Diagram).
+       2. Hero Metric Bar: High-level architectural metrics (Total Nodes, HA Tier Ratio, Active Sync Groups, Storage Mesh).
+       3. Dynamic Topology & Inspection Area: Custom HTML/CSS Node-based topology diagram with interactive node inspection, server health states, and dynamic routing visualization.
+       4. Interactive Architecture Failover Simulator: Demonstrates outage logic and auto-rerouting.
+       5. Tier-by-Tier Implementation Guides: Step-by-step PowerShell scripts, registry settings, and server role configurations.
+       6. Interactive Network & Port Matrix: Searchable table mapping IP subnets and inter-tier firewall ports.
+       7. Master Deployment Checklist: Stateful tracking of deployment tasks saved to browser storage.
+       8. Complete End-to-End System Connectivity Diagram: Placed prominently at the bottom, providing a visual flow diagram of all 12 nodes, VIP load balancers, and active network paths with filterable flow modes (User Session Flow, Admin Flow, Storage Sync, DB Access).
+  -->
+  <!-- Visualization & Content Choices:
+       - Topology Map & Connection Flow Diagram: Constructed with responsive Tailwind grid/flex HTML elements, status indicators, and styled connection nodes (NO SVG / NO Mermaid used).
+       - Connection Flow Highlighter: Vanilla JS engine dynamically highlights directional data paths and protocol markers based on selected operation modes.
+       - Visualizations: Chart.js HTML Canvas bar chart for tier resource allocation.
+  -->
+  <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+  <!-- Top Navigation Header -->
+  <header class="bg-slate-900 text-white sticky top-0 z-30 shadow-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
         <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 rounded-lg bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-teal-400 font-bold text-lg">⚡</div>
-            <div>
-                <h1 class="font-bold text-lg tracking-wide text-slate-100 flex items-center gap-2">
-                    TECHGRID SYSTEMS <span class="text-xs bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded border border-teal-500/30 font-mono">v2.6 NOMINAL</span>
-                </h1>
-                <p class="text-xs text-slate-400 font-mono">Ubuntu Server (`/var/www/`) &bull; 17 Subdomains Mapped</p>
-            </div>
+          <span class="text-2xl" aria-hidden="true">🖥️</span>
+          <div>
+            <h1 class="text-lg font-bold tracking-tight text-white leading-tight">TGS Enterprise Server Topology</h1>
+            <p class="text-xs text-sky-400 font-medium">12-Node High Availability & Deployment Suite</p>
+          </div>
         </div>
-        <div class="flex items-center space-x-2 bg-slate-900 p-1.5 rounded-lg border border-slate-800">
-            <button onclick="switchTab('canvas')" id="btn-canvas" class="px-4 py-1.5 rounded text-xs font-medium transition-all bg-teal-600 text-white shadow">Canvas Blueprint</button>
-            <button onclick="switchTab('cards')" id="btn-cards" class="px-4 py-1.5 rounded text-xs font-medium transition-all text-slate-400 hover:text-white">Structured Grid</button>
-            <button onclick="switchTab('docs')" id="btn-docs" class="px-4 py-1.5 rounded text-xs font-medium transition-all text-slate-400 hover:text-white">Markdown Docs</button>
+        
+        <!-- Desktop Nav -->
+        <nav class="hidden lg:flex space-x-1" id="desktop-nav">
+          <button onclick="switchTab('topology')" id="nav-topology" class="nav-btn px-3 py-2 rounded-md text-sm font-medium transition-colors bg-sky-600 text-white">Topology Map</button>
+          <button onclick="switchTab('simulator')" id="nav-simulator" class="nav-btn px-3 py-2 rounded-md text-sm font-medium transition-colors text-slate-300 hover:text-white hover:bg-slate-800">Failover Sim</button>
+          <button onclick="switchTab('tiers')" id="nav-tiers" class="nav-btn px-3 py-2 rounded-md text-sm font-medium transition-colors text-slate-300 hover:text-white hover:bg-slate-800">Tier Guides</button>
+          <button onclick="switchTab('network')" id="nav-network" class="nav-btn px-3 py-2 rounded-md text-sm font-medium transition-colors text-slate-300 hover:text-white hover:bg-slate-800">Ports & IPs</button>
+          <button onclick="switchTab('checklist')" id="nav-checklist" class="nav-btn px-3 py-2 rounded-md text-sm font-medium transition-colors text-slate-300 hover:text-white hover:bg-slate-800">Checklist</button>
+          <button onclick="scrollToDiagram()" class="px-3 py-2 rounded-md text-sm font-medium transition-colors text-amber-300 hover:text-white hover:bg-slate-800 flex items-center gap-1">
+            <span>⚡</span> Flow Diagram
+          </button>
+        </nav>
+
+        <!-- Mobile Menu Toggle Button -->
+        <div class="lg:hidden flex items-center">
+          <button onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white focus:outline-none text-xl p-2" aria-label="Toggle Navigation">
+            ☰
+          </button>
         </div>
-    </header>
+      </div>
+    </div>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col gap-6">
+    <!-- Mobile Navigation Menu -->
+    <div id="mobile-menu" class="hidden lg:hidden bg-slate-800 border-t border-slate-700 px-4 pt-2 pb-4 space-y-1">
+      <button onclick="switchTab('topology'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-white hover:bg-slate-700">Topology Map</button>
+      <button onclick="switchTab('simulator'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-700">Failover Simulator</button>
+      <button onclick="switchTab('tiers'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-700">Tier Implementation Guides</button>
+      <button onclick="switchTab('network'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-700">Ports & Subnet Matrix</button>
+      <button onclick="switchTab('checklist'); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-700">Deployment Checklist</button>
+      <button onclick="scrollToDiagram(); toggleMobileMenu()" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-amber-300 hover:bg-slate-700">System Flow Diagram</button>
+    </div>
+  </header>
 
-        <section id="view-canvas" class="space-y-4">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 bg-slate-900/60 border border-slate-800/80 p-4 rounded-xl">
-                <div>
-                    <h2 class="text-sm font-semibold text-teal-400 font-mono tracking-wider uppercase">Interactive Swimlane Architecture</h2>
-                    <p class="text-xs text-slate-400">Live rendering of edge routing, secure portals, internal operations, and Linux server mounts.</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="resetZoom()" class="bg-slate-800 hover:bg-slate-700 text-xs px-3 py-1.5 rounded-lg border border-slate-700 font-mono transition">Reset View</button>
-                    <button onclick="triggerRedraw()" class="bg-teal-600 hover:bg-teal-500 text-xs px-3 py-1.5 rounded-lg font-mono transition text-white">Refresh Canvas</button>
-                </div>
-            </div>
+  <!-- Key Metrics Quick Summary Bar -->
+  <section class="bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div class="border-r border-slate-200 last:border-0 pr-2">
+          <span class="text-xs uppercase font-semibold tracking-wider text-slate-500">Total Infrastructure</span>
+          <p class="text-xl font-extrabold text-slate-900 mt-0.5">12 Managed Servers</p>
+        </div>
+        <div class="border-r border-slate-200 last:border-0 pr-2">
+          <span class="text-xs uppercase font-semibold tracking-wider text-slate-500">High Availability</span>
+          <p class="text-xl font-extrabold text-emerald-600 mt-0.5">100% Clustered Tiers</p>
+        </div>
+        <div class="border-r border-slate-200 last:border-0 pr-2">
+          <span class="text-xs uppercase font-semibold tracking-wider text-slate-500">Storage Synchronization</span>
+          <p class="text-xl font-extrabold text-sky-600 mt-0.5">3-Node DFS Mesh</p>
+        </div>
+        <div>
+          <span class="text-xs uppercase font-semibold tracking-wider text-slate-500">Database Resilience</span>
+          <p class="text-xl font-extrabold text-indigo-600 mt-0.5">SQL FCI / Always On</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Container View Area -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+
+    <!-- ========================================= -->
+    <!-- VIEW 1: TOPOLOGY MAP & INTERACTIVE INSPECTOR -->
+    <!-- ========================================= -->
+    <section id="view-topology" class="tab-view space-y-6">
+      
+      <!-- Section Introductory Explanatory Text -->
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <div class="flex items-start space-x-3">
+          <div class="p-2 bg-sky-100 rounded-lg text-sky-700 text-xl" aria-hidden="true">🌐</div>
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">Interactive Architecture & Topology Map</h2>
+            <p class="text-sm text-slate-600 mt-1">
+              This visual map organizes your 12 enterprise servers into 5 distinct architectural tiers. 
+              Click on any server card below to view its functional role, network configuration, clustering state, and setup prerequisites.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Filter Options -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <div class="flex items-center space-x-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Filter Tier:</span>
+          <select id="topology-tier-filter" onchange="filterTopologyNodes()" class="text-sm border border-slate-300 rounded-lg px-3 py-1.5 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <option value="all">All Tiers (12 Hosts)</option>
+            <option value="tier-perimeter">Perimeter & Gateways (3 Hosts)</option>
+            <option value="tier-identity">Tier 1: Identity (2 DCs)</option>
+            <option value="tier-compute">Tier 2: Application Compute (3 RDS Hosts)</option>
+            <option value="tier-storage">Tier 3: File Storage (3 DFS Nodes)</option>
+            <option value="tier-sql">Tier 4: Database Cluster (2 SQL Nodes)</option>
+          </select>
+        </div>
+        <div class="flex items-center space-x-4 text-xs font-medium text-slate-600">
+          <span class="flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block mr-1.5"></span> Clustered / Sync Active</span>
+          <span class="flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block mr-1.5"></span> Active/Passive Node</span>
+          <span class="flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-indigo-500 inline-block mr-1.5"></span> Load Balanced Farm</span>
+        </div>
+      </div>
+
+      <!-- Topology Flow visualizer -->
+      <div class="space-y-8">
+
+        <!-- Perimeter Entry Layer -->
+        <div class="topology-tier-group" id="tier-perimeter">
+          <div class="flex items-center space-x-2 mb-3">
+            <span class="px-2.5 py-0.5 rounded text-xs font-bold uppercase bg-slate-800 text-slate-200">Perimeter / Bastion Zone</span>
+            <span class="text-xs text-slate-500">External HTTPS & Administrative Entry Point</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             
-            <div class="border border-slate-800 rounded-xl overflow-hidden shadow-2xl bg-[#0b101d]">
-                <div class="overflow-x-auto">
-                    <canvas id="blueprintCanvas" width="1440" height="920" class="block w-full min-w-[1200px] cursor-crosshair"></canvas>
-                </div>
-            </div>
-        </section>
-
-        <section id="view-cards" class="hidden space-y-4">
-            <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-xl">
-                <h2 class="text-sm font-semibold text-purple-400 font-mono tracking-wider uppercase">Structured Enterprise Service Blueprint</h2>
-                <p class="text-xs text-slate-400">Categorized hierarchical layers across all active system touchpoints.</p>
-            </div>
-
-            <div class="flex flex-col gap-3">
-                <!-- Lane 1 -->
-                <div class="grid grid-cols-1 lg:grid-cols-[240px_1fr] rounded-xl overflow-hidden border border-emerald-500/30 bg-[#0f172a]">
-                    <div class="bg-emerald-600 text-white p-5 flex items-center font-bold text-xs font-mono uppercase tracking-wider border-r border-emerald-500/30">
-                        Edge & Client Touchpoints (DNS / Wildcard)
-                    </div>
-                    <div class="p-4 flex flex-wrap gap-3 items-center">
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-teal-800">techgrid-systems.org.uk</div>
-                            <div class="text-[10px] text-slate-500">Root Marketing</div>
-                        </div>
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-teal-800">www.techgrid-systems.org.uk</div>
-                            <div class="text-[10px] text-slate-500">Alias</div>
-                        </div>
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-teal-800">news.techgrid-systems.org.uk</div>
-                            <div class="text-[10px] text-slate-500">Company Feed</div>
-                        </div>
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-teal-800">status.techgrid-systems.org.uk</div>
-                            <div class="text-[10px] text-slate-500">Uptime Telemetry</div>
-                        </div>
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-teal-800">locallinesystems.*</div>
-                            <div class="text-[10px] text-slate-500">Regional Utility</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Lane 2 -->
-                <div class="grid grid-cols-1 lg:grid-cols-[240px_1fr] rounded-xl overflow-hidden border border-purple-500/30 bg-[#0f172a]">
-                    <div class="bg-purple-600 text-white p-5 flex items-center font-bold text-xs font-mono uppercase tracking-wider border-r border-purple-500/30">
-                        Client Portals & Authentication
-                    </div>
-                    <div class="p-4 flex flex-wrap gap-3 items-center">
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-purple-800">portal.techgrid-systems...</div>
-                            <div class="text-[10px] text-slate-500">Client Core Access</div>
-                        </div>
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-purple-800">dcp.techgrid-systems...</div>
-                            <div class="text-[10px] text-slate-500">Digital Control Panel</div>
-                        </div>
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-purple-800">helpdesk.techgrid-systems...</div>
-                            <div class="text-[10px] text-slate-500">Support Ticketing</div>
-                        </div>
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-purple-800">support.techgrid-systems...</div>
-                            <div class="text-[10px] text-slate-500">Client Escalations</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Lane 3 -->
-                <div class="grid grid-cols-1 lg:grid-cols-[240px_1fr] rounded-xl overflow-hidden border border-emerald-700/30 bg-[#0f172a]">
-                    <div class="bg-emerald-700 text-white p-5 flex items-center font-bold text-xs font-mono uppercase tracking-wider border-r border-emerald-700/30">
-                        Internal Engineering & Operations
-                    </div>
-                    <div class="p-4 flex flex-wrap gap-3 items-center">
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-emerald-800">internal.techgrid-systems...</div>
-                            <div class="text-[10px] text-slate-500">Ops Dashboard</div>
-                        </div>
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-emerald-800">notes.techgrid-systems...</div>
-                            <div class="text-[10px] text-slate-500">Engineering Notepad</div>
-                        </div>
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-emerald-800">password-vault.*</div>
-                            <div class="text-[10px] text-slate-500">Secure Secrets Vault</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Lane 4 -->
-                <div class="grid grid-cols-1 lg:grid-cols-[240px_1fr] rounded-xl overflow-hidden border border-purple-700/30 bg-[#0f172a]">
-                    <div class="bg-purple-700 text-white p-5 flex items-center font-bold text-xs font-mono uppercase tracking-wider border-r border-purple-700/30">
-                        AI & Micro-App Workflows
-                    </div>
-                    <div class="p-4 flex flex-wrap gap-3 items-center">
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-purple-800">ai.techgrid-systems...</div>
-                            <div class="text-[10px] text-slate-500">AI Engine Node</div>
-                        </div>
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-purple-800">chat.techgrid-systems...</div>
-                            <div class="text-[10px] text-slate-500">Agentic Chatbus</div>
-                        </div>
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-purple-800">automation.techgrid-systems...</div>
-                            <div class="text-[10px] text-slate-500">Webhook Handlers</div>
-                        </div>
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-purple-800">power-automate-training.*</div>
-                            <div class="text-[10px] text-slate-500">Workflows</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Lane 5 -->
-                <div class="grid grid-cols-1 lg:grid-cols-[240px_1fr] rounded-xl overflow-hidden border border-emerald-800/30 bg-[#0f172a]">
-                    <div class="bg-emerald-800 text-white p-5 flex items-center font-bold text-xs font-mono uppercase tracking-wider border-r border-emerald-800/30">
-                        Server Mounts & GitHub CI/CD
-                    </div>
-                    <div class="p-4 flex flex-wrap gap-3 items-center">
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-emerald-900">/var/www/html/</div>
-                            <div class="text-[10px] text-slate-500">Core Web Root</div>
-                        </div>
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-emerald-900">/var/www/portal...</div>
-                            <div class="text-[10px] text-slate-500">Virtual Host Bind</div>
-                        </div>
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-emerald-900">tgs-cpanel</div>
-                            <div class="text-[10px] text-slate-500">Admin Wrappers</div>
-                        </div>
-                        <div class="bg-white text-slate-900 p-3 rounded-lg shadow-sm border border-slate-200 min-w-[150px]">
-                            <div class="font-bold text-xs font-mono text-emerald-900">GitHub Repos</div>
-                            <div class="text-[10px] text-slate-500">Webhook / SSH Sync</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="view-docs" class="hidden space-y-6 bg-slate-900/40 border border-slate-800 p-6 md:p-8 rounded-xl">
-            <div class="border-b border-slate-800 pb-4">
-                <h2 class="text-xl font-bold text-teal-400 font-mono">TechGrid Systems // Integrated Infrastructure Blueprint</h2>
-                <p class="text-xs text-slate-400 mt-1">Host Environment: Ubuntu Linux Server (`/var/www/`) &bull; Architecture v2.6</p>
+            <div onclick="inspectNode('TGS-GW-01')" class="server-card cursor-pointer bg-white p-4 rounded-xl border-2 border-slate-200 hover:border-sky-500 transition-all shadow-sm hover:shadow-md relative">
+              <div class="flex justify-between items-start">
+                <span class="text-xs font-bold px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded">NLB Cluster Node 1</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Active Cluster Member"></span>
+              </div>
+              <h3 class="text-base font-bold text-slate-900 mt-2">TGS-GW-01</h3>
+              <p class="text-xs text-slate-500">RD Gateway / Reverse Proxy</p>
+              <div class="mt-3 pt-2 border-t border-slate-100 flex justify-between text-xs text-slate-600">
+                <span>Port: 443 / HTTPS</span>
+                <span class="font-mono text-slate-500">10.0.10.11</span>
+              </div>
             </div>
 
-            <div class="space-y-6 text-slate-300 text-sm leading-relaxed">
-                <div>
-                    <h3 class="text-base font-semibold text-white mb-2 font-mono text-teal-300">1. High-Level Topology & Domain Mapping</h3>
-                    <p class="text-xs text-slate-400 mb-3">All subdomains route through an edge proxy/reverse-proxy (Nginx) running on the Ubuntu server, mapping incoming requests to their respective document roots or upstream application services.</p>
-                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 font-mono text-xs overflow-x-auto text-teal-400">
-<pre>                  [ Public / User Traffic ]
-                              │
-               (DNS Wildcard / A Records)
-                              ▼
-           ┌─────────────────────────────────────┐
-           │   Ubuntu Linux Edge Server (Nginx)  │
-           └──────────────────┬──────────────────┘
-                              │
-       ┌──────────────────────┴──────────────────────┐
-       ▼                                             ▼
-[ Core Web & Marketing ]                     [ Specialized Micro-Apps ]
- • techgrid-systems.org.uk                    • ai.techgrid-systems.org.uk
- • www.techgrid-systems.org.uk                • chat.techgrid-systems.org.uk
-                                             • automation.techgrid-systems.org.uk
-       │                                     • power-automate-training.*
-       │
-       ▼                                     [ Client & Internal Ops ]
-[ Document Roots (/var/www/) ]                • portal.techgrid-systems.org.uk
- • /html (Main Web)                          • dcp.techgrid-systems.org.uk
- • /dcp.techgrid-systems.org.uk              • helpdesk.techgrid-systems.org.uk
- • /portal.techgrid-systems.org.uk           • support.techgrid-systems.org.uk
- • /status.techgrid-systems.org.uk           • internal.techgrid-systems.org.uk
- • /notes.techgrid-systems.org.uk            • news.techgrid-systems.org.uk
- • /password-vault.*                         • locallinesystems.*
-                                             • status.techgrid-systems.org.uk
-                                             • tgs-cpanel.techgrid-systems.org.uk</pre>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 class="text-base font-semibold text-white mb-2 font-mono text-teal-300">2. Server Directory Mounting (`/var/www/`)</h3>
-                    <div class="overflow-x-auto border border-slate-800 rounded-lg">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-900 text-slate-400 border-b border-slate-800 font-mono">
-                                <tr>
-                                    <th class="p-3">Directory Path / Subdomain Target</th>
-                                    <th class="p-3">Function & Core Purpose</th>
-                                    <th class="p-3">Associated Technologies</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-800 font-mono">
-                                <tr class="hover:bg-slate-800/50">
-                                    <td class="p-3 text-teal-400">/var/www/html/</td>
-                                    <td class="p-3 text-slate-300">Main public marketing site & root entry point</td>
-                                    <td class="p-3 text-slate-400">HTML, CSS, JS, PHP</td>
-                                </tr>
-                                <tr class="hover:bg-slate-800/50">
-                                    <td class="p-3 text-teal-400">/var/www/dcp.techgrid-systems...</td>
-                                    <td class="p-3 text-slate-300">Client/Partner Digital Control Panel interface</td>
-                                    <td class="p-3 text-slate-400">PHP, MySQL, API Handlers</td>
-                                </tr>
-                                <tr class="hover:bg-slate-800/50">
-                                    <td class="p-3 text-teal-400">/var/www/helpdesk.techgrid-systems...</td>
-                                    <td class="p-3 text-slate-300">Ticketing and user support ticketing backend</td>
-                                    <td class="p-3 text-slate-400">PHP, Database backend</td>
-                                </tr>
-                                <tr class="hover:bg-slate-800/50">
-                                    <td class="p-3 text-teal-400">/var/www/notes.techgrid-systems...</td>
-                                    <td class="p-3 text-slate-300">Collaborative internal engineering notepad</td>
-                                    <td class="p-3 text-slate-400">Lightweight DB / Flat-file sync</td>
-                                </tr>
-                                <tr class="hover:bg-slate-800/50">
-                                    <td class="p-3 text-teal-400">/var/www/password-vault.*</td>
-                                    <td class="p-3 text-slate-300">Secure credential store & internal secrets management</td>
-                                    <td class="p-3 text-slate-400">Encrypted PHP/JS vault</td>
-                                </tr>
-                                <tr class="hover:bg-slate-800/50">
-                                    <td class="p-3 text-teal-400">/var/www/portal.techgrid-systems...</td>
-                                    <td class="p-3 text-slate-300">Core client portal access point</td>
-                                    <td class="p-3 text-slate-400">PHP, User Auth, Session DB</td>
-                                </tr>
-                                <tr class="hover:bg-slate-800/50">
-                                    <td class="p-3 text-teal-400">/var/www/status.techgrid-systems...</td>
-                                    <td class="p-3 text-slate-300">System uptime & infrastructure node monitor</td>
-                                    <td class="p-3 text-slate-400">PHP Status Engine</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 class="text-base font-semibold text-white mb-2 font-mono text-teal-300">3. Version Control & GitHub Pipeline Integration</h3>
-                    <p class="text-xs text-slate-400 mb-3">To ensure seamless updates without disrupting active subdomains, your GitHub repositories map directly to your local development and deployment workflow.</p>
-                    <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 font-mono text-xs overflow-x-auto text-teal-400">
-<pre>[ GitHub Organization Repositories ]
-├── techgrid-core-web       ──(CI/CD / Webhook)──> /var/www/html/
-├── techgrid-client-portal  ──(SSH / Sync)───────> /var/www/portal.techgrid-systems.org.uk/
-├── techgrid-status-engine  ──(Automated Push)───> /var/www/status.techgrid-systems.org.uk/
-└── techgrid-vault-secure   ──(Manual Secure Deploy)> /var/www/password-vault.*</pre>
-                    </div>
-                </div>
+            <div onclick="inspectNode('TGS-GW-02')" class="server-card cursor-pointer bg-white p-4 rounded-xl border-2 border-slate-200 hover:border-sky-500 transition-all shadow-sm hover:shadow-md relative">
+              <div class="flex justify-between items-start">
+                <span class="text-xs font-bold px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded">NLB Cluster Node 2</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Active Cluster Member"></span>
+              </div>
+              <h3 class="text-base font-bold text-slate-900 mt-2">TGS-GW-02</h3>
+              <p class="text-xs text-slate-500">RD Gateway / Reverse Proxy</p>
+              <div class="mt-3 pt-2 border-t border-slate-100 flex justify-between text-xs text-slate-600">
+                <span>Port: 443 / HTTPS</span>
+                <span class="font-mono text-slate-500">10.0.10.12</span>
+              </div>
             </div>
-        </section>
 
-    </main>
+            <div onclick="inspectNode('TGS-JMP-01')" class="server-card cursor-pointer bg-white p-4 rounded-xl border-2 border-amber-200 hover:border-amber-500 transition-all shadow-sm hover:shadow-md relative bg-amber-50/20">
+              <div class="flex justify-between items-start">
+                <span class="text-xs font-bold px-2 py-0.5 bg-amber-100 text-amber-800 rounded">Management Bastion</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Operational"></span>
+              </div>
+              <h3 class="text-base font-bold text-slate-900 mt-2">TGS-JMP-01</h3>
+              <p class="text-xs text-slate-500">Secure Admin Jump Box</p>
+              <div class="mt-3 pt-2 border-t border-amber-100/60 flex justify-between text-xs text-slate-600">
+                <span>Admin Isolated Zone</span>
+                <span class="font-mono text-slate-500">10.0.10.50</span>
+              </div>
+            </div>
 
-    <footer class="border-t border-slate-800 py-4 text-center text-xs text-slate-500 font-mono mt-auto bg-[#0b101d]">
-        TechGrid Systems Architecture Engine &bull; Generated Live from Server Scan &bull; All Subdomains Nominal
-    </footer>
+          </div>
+        </div>
 
-    <script>
-        function switchTab(tab) {
-            document.getElementById('view-canvas').classList.add('hidden');
-            document.getElementById('view-cards').classList.add('hidden');
-            document.getElementById('view-docs').classList.add('hidden');
+        <!-- Tier Connector Divider -->
+        <div class="flex items-center justify-center my-2">
+          <div class="h-8 w-0.5 bg-slate-300"></div>
+          <span class="mx-3 text-xs font-bold uppercase tracking-widest text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
+            Internal Network Boundary (Firewall Enforced)
+          </span>
+          <div class="h-8 w-0.5 bg-slate-300"></div>
+        </div>
 
-            document.getElementById('btn-canvas').className = "px-4 py-1.5 rounded text-xs font-medium transition-all text-slate-400 hover:text-white";
-            document.getElementById('btn-cards').className = "px-4 py-1.5 rounded text-xs font-medium transition-all text-slate-400 hover:text-white";
-            document.getElementById('btn-docs').className = "px-4 py-1.5 rounded text-xs font-medium transition-all text-slate-400 hover:text-white";
+        <!-- Tier 1: Identity Tier -->
+        <div class="topology-tier-group" id="tier-identity">
+          <div class="flex items-center space-x-2 mb-3">
+            <span class="px-2.5 py-0.5 rounded text-xs font-bold uppercase bg-blue-700 text-white">Tier 1: Identity Services</span>
+            <span class="text-xs text-slate-500">Active Directory, DNS, SYSVOL Replication</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-            if (tab === 'canvas') {
-                document.getElementById('view-canvas').classList.remove('hidden');
-                document.getElementById('btn-canvas').className = "px-4 py-1.5 rounded text-xs font-medium transition-all bg-teal-600 text-white shadow";
-                drawBlueprint();
-            } else if (tab === 'cards') {
-                document.getElementById('view-cards').classList.remove('hidden');
-                document.getElementById('btn-cards').className = "px-4 py-1.5 rounded text-xs font-medium transition-all bg-purple-600 text-white shadow";
-            } else if (tab === 'docs') {
-                document.getElementById('view-docs').classList.remove('hidden');
-                document.getElementById('btn-docs').className = "px-4 py-1.5 rounded text-xs font-medium transition-all bg-teal-600 text-white shadow";
-            }
+            <div onclick="inspectNode('TGS-DC-01')" class="server-card cursor-pointer bg-white p-4 rounded-xl border-2 border-slate-200 hover:border-sky-500 transition-all shadow-sm hover:shadow-md">
+              <div class="flex justify-between items-start">
+                <span class="text-xs font-bold px-2 py-0.5 bg-blue-100 text-blue-800 rounded">Primary Domain Controller</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Active Sync"></span>
+              </div>
+              <h3 class="text-base font-bold text-slate-900 mt-2">TGS-DC-01</h3>
+              <p class="text-xs text-slate-500">AD DS / DNS / Global Catalog</p>
+              <div class="mt-3 pt-2 border-t border-slate-100 flex justify-between text-xs text-slate-600">
+                <span>Domain: tgs.local</span>
+                <span class="font-mono text-slate-500">10.0.20.11</span>
+              </div>
+            </div>
+
+            <div onclick="inspectNode('TGS-DC-02')" class="server-card cursor-pointer bg-white p-4 rounded-xl border-2 border-slate-200 hover:border-sky-500 transition-all shadow-sm hover:shadow-md">
+              <div class="flex justify-between items-start">
+                <span class="text-xs font-bold px-2 py-0.5 bg-blue-100 text-blue-800 rounded">Secondary Domain Controller</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Active Sync"></span>
+              </div>
+              <h3 class="text-base font-bold text-slate-900 mt-2">TGS-DC-02</h3>
+              <p class="text-xs text-slate-500">AD DS / DNS / Global Catalog</p>
+              <div class="mt-3 pt-2 border-t border-slate-100 flex justify-between text-xs text-slate-600">
+                <span>Active/Active Sync</span>
+                <span class="font-mono text-slate-500">10.0.20.12</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Tier 2: Application Compute -->
+        <div class="topology-tier-group" id="tier-compute">
+          <div class="flex items-center space-x-2 mb-3">
+            <span class="px-2.5 py-0.5 rounded text-xs font-bold uppercase bg-purple-700 text-white">Tier 2: Compute & App Sessions</span>
+            <span class="text-xs text-slate-500">Remote Desktop Session Host Collection</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+            <div onclick="inspectNode('TGS-RDS-01')" class="server-card cursor-pointer bg-white p-4 rounded-xl border-2 border-slate-200 hover:border-purple-500 transition-all shadow-sm hover:shadow-md">
+              <div class="flex justify-between items-start">
+                <span class="text-xs font-bold px-2 py-0.5 bg-purple-100 text-purple-800 rounded">Session Host 01</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-indigo-500" title="Farm Member"></span>
+              </div>
+              <h3 class="text-base font-bold text-slate-900 mt-2">TGS-RDS-01</h3>
+              <p class="text-xs text-slate-500">RDS App Compute / UPD Target</p>
+              <div class="mt-3 pt-2 border-t border-slate-100 flex justify-between text-xs text-slate-600">
+                <span>Load Balanced Farm</span>
+                <span class="font-mono text-slate-500">10.0.30.21</span>
+              </div>
+            </div>
+
+            <div onclick="inspectNode('TGS-RDS-02')" class="server-card cursor-pointer bg-white p-4 rounded-xl border-2 border-slate-200 hover:border-purple-500 transition-all shadow-sm hover:shadow-md">
+              <div class="flex justify-between items-start">
+                <span class="text-xs font-bold px-2 py-0.5 bg-purple-100 text-purple-800 rounded">Session Host 02</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-indigo-500" title="Farm Member"></span>
+              </div>
+              <h3 class="text-base font-bold text-slate-900 mt-2">TGS-RDS-02</h3>
+              <p class="text-xs text-slate-500">RDS App Compute / UPD Target</p>
+              <div class="mt-3 pt-2 border-t border-slate-100 flex justify-between text-xs text-slate-600">
+                <span>Load Balanced Farm</span>
+                <span class="font-mono text-slate-500">10.0.30.22</span>
+              </div>
+            </div>
+
+            <div onclick="inspectNode('TGS-RDS-03')" class="server-card cursor-pointer bg-white p-4 rounded-xl border-2 border-slate-200 hover:border-purple-500 transition-all shadow-sm hover:shadow-md">
+              <div class="flex justify-between items-start">
+                <span class="text-xs font-bold px-2 py-0.5 bg-purple-100 text-purple-800 rounded">Session Host 03</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-indigo-500" title="Farm Member"></span>
+              </div>
+              <h3 class="text-base font-bold text-slate-900 mt-2">TGS-RDS-03</h3>
+              <p class="text-xs text-slate-500">RDS App Compute / UPD Target</p>
+              <div class="mt-3 pt-2 border-t border-slate-100 flex justify-between text-xs text-slate-600">
+                <span>Load Balanced Farm</span>
+                <span class="font-mono text-slate-500">10.0.30.23</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Tier 3 & Tier 4 Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          <!-- Storage Tier -->
+          <div class="topology-tier-group" id="tier-storage">
+            <div class="flex items-center space-x-2 mb-3">
+              <span class="px-2.5 py-0.5 rounded text-xs font-bold uppercase bg-teal-700 text-white">Tier 3: Distributed Storage</span>
+              <span class="text-xs text-slate-500">DFS-N & DFS-R Replicated Shares</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              
+              <div onclick="inspectNode('TGS-FS-01')" class="server-card cursor-pointer bg-white p-3.5 rounded-xl border-2 border-slate-200 hover:border-teal-500 transition-all shadow-sm">
+                <span class="text-[10px] font-bold px-2 py-0.5 bg-teal-100 text-teal-800 rounded">DFS Target 1</span>
+                <h4 class="text-sm font-bold text-slate-900 mt-1.5">TGS-FS-01</h4>
+                <p class="text-[11px] text-slate-500">Multipurpose Sync</p>
+                <div class="mt-2 text-[10px] font-mono text-slate-400">10.0.40.31</div>
+              </div>
+
+              <div onclick="inspectNode('TGS-FS-02')" class="server-card cursor-pointer bg-white p-3.5 rounded-xl border-2 border-slate-200 hover:border-teal-500 transition-all shadow-sm">
+                <span class="text-[10px] font-bold px-2 py-0.5 bg-teal-100 text-teal-800 rounded">DFS Target 2</span>
+                <h4 class="text-sm font-bold text-slate-900 mt-1.5">TGS-FS-02</h4>
+                <p class="text-[11px] text-slate-500">Multipurpose Sync</p>
+                <div class="mt-2 text-[10px] font-mono text-slate-400">10.0.40.32</div>
+              </div>
+
+              <div onclick="inspectNode('TGS-FS-03')" class="server-card cursor-pointer bg-white p-3.5 rounded-xl border-2 border-slate-200 hover:border-teal-500 transition-all shadow-sm">
+                <span class="text-[10px] font-bold px-2 py-0.5 bg-teal-100 text-teal-800 rounded">DFS Target 3</span>
+                <h4 class="text-sm font-bold text-slate-900 mt-1.5">TGS-FS-03</h4>
+                <p class="text-[11px] text-slate-500">Multipurpose Sync</p>
+                <div class="mt-2 text-[10px] font-mono text-slate-400">10.0.40.33</div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Database Tier -->
+          <div class="topology-tier-group" id="tier-sql">
+            <div class="flex items-center space-x-2 mb-3">
+              <span class="px-2.5 py-0.5 rounded text-xs font-bold uppercase bg-rose-700 text-white">Tier 4: Database Infrastructure</span>
+              <span class="text-xs text-slate-500">SQL AlwaysOn / Failover Cluster Instance</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+              <div onclick="inspectNode('TGS-SQL-01')" class="server-card cursor-pointer bg-white p-3.5 rounded-xl border-2 border-slate-200 hover:border-rose-500 transition-all shadow-sm">
+                <div class="flex justify-between items-start">
+                  <span class="text-[10px] font-bold px-2 py-0.5 bg-rose-100 text-rose-800 rounded">SQL Cluster Node 1</span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500" title="Primary Active Node"></span>
+                </div>
+                <h4 class="text-sm font-bold text-slate-900 mt-1.5">TGS-SQL-01</h4>
+                <p class="text-[11px] text-slate-500">WSFC / SQL Instance</p>
+                <div class="mt-2 text-[10px] font-mono text-slate-400">10.0.50.41</div>
+              </div>
+
+              <div onclick="inspectNode('TGS-SQL-02')" class="server-card cursor-pointer bg-white p-3.5 rounded-xl border-2 border-slate-200 hover:border-rose-500 transition-all shadow-sm">
+                <div class="flex justify-between items-start">
+                  <span class="text-[10px] font-bold px-2 py-0.5 bg-rose-100 text-rose-800 rounded">SQL Cluster Node 2</span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500" title="Synchronous Standby"></span>
+                </div>
+                <h4 class="text-sm font-bold text-slate-900 mt-1.5">TGS-SQL-02</h4>
+                <p class="text-[11px] text-slate-500">WSFC / SQL Standby</p>
+                <div class="mt-2 text-[10px] font-mono text-slate-400">10.0.50.42</div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Server Distribution Chart Section -->
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm mt-8">
+        <h3 class="text-base font-bold text-slate-900 mb-1">Architecture Resource & Tier Distribution</h3>
+        <p class="text-xs text-slate-500 mb-4">Breakdown of server roles and high-availability pairing across the environment.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <div>
+            <!-- Required chart container wrapper -->
+            <div class="chart-container">
+              <canvas id="tierDistributionChart"></canvas>
+            </div>
+          </div>
+          <div class="space-y-3 text-sm text-slate-600">
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <span class="font-bold text-slate-800">Redundancy Guarantee:</span>
+              <p class="text-xs text-slate-600 mt-1">Every tier features minimum N+1 redundancy. Storage uses 3-way mesh replication to protect against dual-node failure.</p>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+              <span class="font-bold text-slate-800">Connection Routing:</span>
+              <p class="text-xs text-slate-600 mt-1">Clients connect exclusively through <code class="bg-slate-200 px-1 rounded text-slate-800">rdg.tgs.local</code>. Direct RDP to internal session hosts or database nodes is strictly dropped by perimeter firewalls.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- VIEW 2: INTERACTIVE FAILOVER SIMULATOR    -->
+    <!-- ========================================= -->
+    <section id="view-simulator" class="tab-view hidden space-y-6">
+      
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <div class="flex items-start space-x-3">
+          <div class="p-2 bg-amber-100 text-amber-700 rounded-lg text-xl" aria-hidden="true">⚡</div>
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">High Availability & Dynamic Failover Simulator</h2>
+            <p class="text-sm text-slate-600 mt-1">
+              Test the environment's resilience! Toggle key nodes "OFFLINE" to observe how Network Load Balancing (NLB), DFS Referral Tracking, and Windows Server Failover Clustering (WSFC) automatically reroute operational traffic.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Controls Column -->
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-5">
+          <h3 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">Simulate Server Outage</h3>
+          
+          <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">RD Gateway Cluster Status</label>
+            <div class="mt-2 space-y-2">
+              <label class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <span class="text-sm font-medium text-slate-800">TGS-GW-01 (Primary NLB Node)</span>
+                <input type="checkbox" id="sim-gw1" onchange="runFailoverSimulation()" checked class="w-4 h-4 text-sky-600 rounded">
+              </label>
+              <label class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <span class="text-sm font-medium text-slate-800">TGS-GW-02 (Secondary NLB Node)</span>
+                <input type="checkbox" id="sim-gw2" onchange="runFailoverSimulation()" checked class="w-4 h-4 text-sky-600 rounded">
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">DFS Storage Cluster Status</label>
+            <div class="mt-2 space-y-2">
+              <label class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <span class="text-sm font-medium text-slate-800">TGS-FS-01 (DFS Target 1)</span>
+                <input type="checkbox" id="sim-fs1" onchange="runFailoverSimulation()" checked class="w-4 h-4 text-teal-600 rounded">
+              </label>
+              <label class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <span class="text-sm font-medium text-slate-800">TGS-FS-02 (DFS Target 2)</span>
+                <input type="checkbox" id="sim-fs2" onchange="runFailoverSimulation()" checked class="w-4 h-4 text-teal-600 rounded">
+              </label>
+              <label class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <span class="text-sm font-medium text-slate-800">TGS-FS-03 (DFS Target 3)</span>
+                <input type="checkbox" id="sim-fs3" onchange="runFailoverSimulation()" checked class="w-4 h-4 text-teal-600 rounded">
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-500">SQL Cluster Availability</label>
+            <div class="mt-2 space-y-2">
+              <label class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <span class="text-sm font-medium text-slate-800">TGS-SQL-01 (Primary Instance)</span>
+                <input type="checkbox" id="sim-sql1" onchange="runFailoverSimulation()" checked class="w-4 h-4 text-rose-600 rounded">
+              </label>
+              <label class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <span class="text-sm font-medium text-slate-800">TGS-SQL-02 (Failover Partner)</span>
+                <input type="checkbox" id="sim-sql2" onchange="runFailoverSimulation()" checked class="w-4 h-4 text-rose-600 rounded">
+              </label>
+            </div>
+          </div>
+
+          <button onclick="resetSimulation()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg transition-colors">
+            Reset All Nodes to Online
+          </button>
+        </div>
+
+        <!-- Simulation Operational Output Status Cards -->
+        <div class="lg:col-span-2 space-y-4">
+          
+          <!-- Gateway Status Outcome -->
+          <div id="status-card-gw" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm transition-all">
+            <div class="flex items-center justify-between">
+              <h4 class="font-bold text-slate-900 text-sm flex items-center">
+                <span class="mr-2" aria-hidden="true">🚪</span> RD Gateway Entry VIP (<code class="font-mono text-xs text-sky-600">rdg.tgs.local</code>)
+              </h4>
+              <span id="badge-gw" class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800">HEALTHY (100% Capacity)</span>
+            </div>
+            <p id="desc-gw" class="text-xs text-slate-600 mt-2">
+              Both Gateway nodes are actively responding to inbound SSL requests on Port 443. Load is evenly distributed across TGS-GW-01 and TGS-GW-02 via Network Load Balancing.
+            </p>
+          </div>
+
+          <!-- DFS File Storage Status Outcome -->
+          <div id="status-card-fs" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm transition-all">
+            <div class="flex items-center justify-between">
+              <h4 class="font-bold text-slate-900 text-sm flex items-center">
+                <span class="mr-2" aria-hidden="true">📁</span> Enterprise Storage Namespace (<code class="font-mono text-xs text-teal-600">\\tgs.local\corporate</code>)
+              </h4>
+              <span id="badge-fs" class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800">FULLY REPLICATED (3/3 Nodes)</span>
+            </div>
+            <p id="desc-fs" class="text-xs text-slate-600 mt-2">
+              DFS Namespace referral target is actively directing user requests across all three full-mesh replication nodes. User profiles and FSLogix containers are completely synchronized.
+            </p>
+          </div>
+
+          <!-- SQL Cluster Status Outcome -->
+          <div id="status-card-sql" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm transition-all">
+            <div class="flex items-center justify-between">
+              <h4 class="font-bold text-slate-900 text-sm flex items-center">
+                <span class="mr-2" aria-hidden="true">🗄️</span> SQL Virtual Network Name (<code class="font-mono text-xs text-rose-600">TGS-SQLCluster</code>)
+              </h4>
+              <span id="badge-sql" class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800">PRIMARY ONLINE (TGS-SQL-01)</span>
+            </div>
+            <p id="desc-sql" class="text-xs text-slate-600 mt-2">
+              SQL Server Failover Instance is running on primary node TGS-SQL-01. Synchronous data replication is maintaining zero data loss protection on TGS-SQL-02.
+            </p>
+          </div>
+
+          <!-- Real-Time Traffic Routing Log -->
+          <div class="bg-slate-900 text-slate-200 p-4 rounded-xl font-mono text-xs h-44 overflow-y-auto custom-scrollbar">
+            <div class="text-slate-400 border-b border-slate-800 pb-1 mb-2 font-sans font-bold flex justify-between">
+              <span>Dynamic Telemetry & Referral Log</span>
+              <span class="text-emerald-400">● LIVE</span>
+            </div>
+            <div id="sim-log-output" class="space-y-1">
+              <p class="text-slate-400">[SYSTEM INIT] Cluster health check passed. All 12 server endpoints responding.</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- VIEW 3: DETAILED TIER IMPLEMENTATION GUIDES -->
+    <!-- ========================================= -->
+    <section id="view-tiers" class="tab-view hidden space-y-6">
+      
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900">Step-by-Step Implementation & Configuration Guides</h2>
+        <p class="text-sm text-slate-600 mt-1">
+          Select a functional tier below to view verbatim technical deployment instructions, PowerShell installation commands, and clustering configurations.
+        </p>
+
+        <!-- Tier Tabs -->
+        <div class="flex flex-wrap gap-2 mt-4 border-b border-slate-200 pb-3" id="guide-tabs-container">
+          <button onclick="switchGuideTab('tier1')" id="tab-tier1" class="guide-tab-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-sky-600 text-white">Tier 1: Identity (DCs)</button>
+          <button onclick="switchGuideTab('tier2')" id="tab-tier2" class="guide-tab-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Tier 2: File Services (DFS)</button>
+          <button onclick="switchGuideTab('tier3')" id="tab-tier3" class="guide-tab-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Tier 3: Remote Access & Gateways</button>
+          <button onclick="switchGuideTab('tier4')" id="tab-tier4" class="guide-tab-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Tier 4: RDS Session Farm</button>
+          <button onclick="switchGuideTab('tier5')" id="tab-tier5" class="guide-tab-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Tier 5: SQL HA Cluster</button>
+        </div>
+      </div>
+
+      <!-- TIER 1 CONTENT -->
+      <div id="guide-content-tier1" class="guide-content-panel space-y-4">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <h3 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">Tier 1: Active Directory & Core Services Deployment (`TGS-DC-01` & `TGS-DC-02`)</h3>
+          <p class="text-xs text-slate-600">Your Domain Controllers provide core authentication, DNS name resolution, and Group Policy replication.</p>
+          
+          <div class="space-y-3 text-sm text-slate-700">
+            <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider text-sky-700">1. Promote Primary Domain Controller (`TGS-DC-01`)</h4>
+            <ul class="list-disc pl-5 text-xs space-y-1">
+              <li>Install <strong>Active Directory Domain Services (AD DS)</strong> and <strong>DNS Server</strong> roles.</li>
+              <li>Promote the server to establish a new forest root domain (e.g., <code class="bg-slate-100 px-1 font-mono text-slate-800">tgs.local</code>).</li>
+            </ul>
+
+            <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider text-sky-700">2. Promote Secondary Domain Controller (`TGS-DC-02`)</h4>
+            <ul class="list-disc pl-5 text-xs space-y-1">
+              <li>Install AD DS and DNS roles via PowerShell or Server Manager.</li>
+              <li>Promote the server as an <strong>additional domain controller</strong> to the existing <code class="bg-slate-100 px-1 font-mono text-slate-800">tgs.local</code> domain.</li>
+            </ul>
+
+            <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider text-sky-700">3. Verify SYSVOL Replication Health</h4>
+            <p class="text-xs text-slate-600">Windows Server uses DFS Replication (DFSR) for SYSVOL sync. Confirm health on both nodes:</p>
+            <div class="bg-slate-900 text-slate-100 p-3 rounded-lg text-xs font-mono">
+              # PowerShell Verification Command<br>
+              Get-DfsrState -ComputerName "TGS-DC-01", "TGS-DC-02"
+            </div>
+            <p class="text-xs text-slate-500">Check Event Viewer under <code class="bg-slate-100 px-1 font-mono text-slate-800">DFS Replication</code> logs for <strong>Event ID 4602</strong> and <strong>4614</strong>.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIER 2 CONTENT -->
+      <div id="guide-content-tier2" class="guide-content-panel hidden space-y-4">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <h3 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">Tier 2: DFS Shared Data Tier (`TGS-FS-01`, `TGS-FS-02`, `TGS-FS-03`)</h3>
+          <p class="text-xs text-slate-600">The three file servers utilize a DFS Namespace backed by DFS Replication to provide fault tolerance and automatic referral failover for RDS profiles and company data.</p>
+          
+          <div class="space-y-3 text-sm text-slate-700">
+            <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider text-teal-700">Step 1: Install Roles Across All 3 File Servers</h4>
+            <p class="text-xs text-slate-600">Execute on <code class="bg-slate-100 px-1 font-mono text-slate-800">TGS-FS-01</code>, <code class="bg-slate-100 px-1 font-mono text-slate-800">TGS-FS-02</code>, and <code class="bg-slate-100 px-1 font-mono text-slate-800">TGS-FS-03</code>:</p>
+            <div class="bg-slate-900 text-slate-100 p-3 rounded-lg text-xs font-mono overflow-x-auto">
+              Install-WindowsFeature FS-FileServer, RSAT-DFS-Mgmt-Con, FS-DFS-Namespace, FS-DFS-Replication -IncludeManagementTools
+            </div>
+
+            <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider text-teal-700">Step 2: Create Identical Local Folder Paths</h4>
+            <p class="text-xs text-slate-600">On each node, build the baseline directory structure: <code class="bg-slate-100 px-1 font-mono text-slate-800">C:\Shares\CompanyData</code> and <code class="bg-slate-100 px-1 font-mono text-slate-800">C:\Shares\Profiles</code>.</p>
+
+            <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider text-teal-700">Step 3: Configure DFS Multipurpose Replication Group</h4>
+            <ul class="list-disc pl-5 text-xs space-y-1 text-slate-600">
+              <li>Open <strong>DFS Management Console</strong> (<code class="bg-slate-100 px-1 font-mono text-slate-800">dfsmgmt.msc</code>).</li>
+              <li>Right-click <strong>Replication</strong> → <strong>New Replication Group</strong> → <strong>Multipurpose Replication Group</strong>.</li>
+              <li>Add all three file hosts (<code class="bg-slate-100 px-1 font-mono text-slate-800">TGS-FS-01</code>, <code class="bg-slate-100 px-1 font-mono text-slate-800">TGS-FS-02</code>, <code class="bg-slate-100 px-1 font-mono text-slate-800">TGS-FS-03</code>).</li>
+              <li>Select <strong>Full Mesh Topology</strong> and set continuous bandwidth schedule.</li>
+            </ul>
+
+            <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider text-teal-700">Step 4: Configure Domain DFS Namespace (DFS-N)</h4>
+            <p class="text-xs text-slate-600">Build domain-based namespace: <code class="bg-slate-100 px-1 font-mono text-slate-800">\\tgs.local\corporate</code>. Add local folder targets from all 3 hosts and enable referral ordering.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIER 3 CONTENT -->
+      <div id="guide-content-tier3" class="guide-content-panel hidden space-y-4">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <h3 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">Tier 3: Remote Access & Security (`TGS-GW-01`, `TGS-GW-02`, `TGS-JMP-01`)</h3>
+          <p class="text-xs text-slate-600">Acts as the perimeter security barrier and strict administrative access layer.</p>
+          
+          <div class="space-y-4">
+            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+              <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider text-indigo-700 mb-2">RD Gateway Clustering (`TGS-GW-01` & `TGS-GW-02`)</h4>
+              <ol class="list-decimal pl-5 text-xs space-y-1.5 text-slate-600">
+                <li>Install <strong>Remote Desktop Gateway</strong> role on both nodes.</li>
+                <li>Import a unified SSL SAN / Wildcard certificate (e.g., <code class="bg-slate-200 px-1 rounded text-slate-800">*.tgs.local</code>).</li>
+                <li>Configure Network Load Balancing (NLB) or DNS round-robin pointing <code class="bg-slate-200 px-1 rounded text-slate-800">rdg.tgs.local</code> to both node IPs.</li>
+                <li>Configure identical RD CAP (Authorization) and RD RAP (Resource) policies across both gateways.</li>
+              </ol>
+            </div>
+
+            <div class="bg-amber-50/50 p-4 rounded-lg border border-amber-200">
+              <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider text-amber-800 mb-2">Management Jump Box Configuration (`TGS-JMP-01`)</h4>
+              <p class="text-xs text-slate-700 leading-relaxed">
+                Acts as the single administrative bastion host. Workstations are prohibited from connecting directly to internal server subnets. Admins must tunnel through RD Gateway to <code class="bg-amber-100 px-1 rounded text-slate-800">TGS-JMP-01</code> before launching administrative tools.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIER 4 CONTENT -->
+      <div id="guide-content-tier4" class="guide-content-panel hidden space-y-4">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <h3 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">Tier 4: RDS Session Host Farm (`TGS-RDS-01`, `TGS-RDS-02`, `TGS-RDS-03`)</h3>
+          <p class="text-xs text-slate-600">Delivers application compute and desktop sessions, dynamically balanced across three hosts.</p>
+          
+          <div class="space-y-3 text-xs text-slate-700">
+            <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider text-purple-700">1. Install Session Host Role</h4>
+            <p class="text-slate-600">Deploy Remote Desktop Session Host role across all three computing nodes.</p>
+
+            <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider text-purple-700">2. Configure Session Collection & Load Balancing</h4>
+            <p class="text-slate-600">Group all three nodes into a single RD Session Collection. Set relative weightings to evenly balance incoming user sessions.</p>
+
+            <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider text-purple-700">3. Profile Storage Mapping (FSLogix / UPD)</h4>
+            <p class="text-slate-600">Set user profile disk storage path to your DFS namespace:</p>
+            <div class="bg-slate-900 text-slate-100 p-2.5 rounded text-xs font-mono">
+              \\tgs.local\corporate\Profiles
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIER 5 CONTENT -->
+      <div id="guide-content-tier5" class="guide-content-panel hidden space-y-4">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
+          <h3 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-2">Tier 5: SQL High Availability Cluster (`TGS-SQL-01` & `TGS-SQL-02`)</h3>
+          <p class="text-xs text-slate-600">Provides high-availability database performance for line-of-business applications.</p>
+          
+          <div class="space-y-3 text-xs text-slate-700">
+            <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider text-rose-700">1. Prerequisites & Windows Failover Cluster (WSFC)</h4>
+            <p class="text-slate-600">Join both nodes to domain, install Failover Clustering feature, and pass Cluster Validation wizard.</p>
+
+            <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider text-rose-700">2. SQL Failover Cluster Instance (FCI) or Always On</h4>
+            <p class="text-slate-600">Install SQL Server as a Failover Cluster Instance on <code class="bg-slate-100 px-1 font-mono text-slate-800">TGS-SQL-01</code>, then add <code class="bg-slate-100 px-1 font-mono text-slate-800">TGS-SQL-02</code> as an additional cluster node.</p>
+
+            <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider text-rose-700">3. Application Connection Strings</h4>
+            <p class="text-slate-600">Point application connection strings to Virtual Network Name <code class="bg-slate-100 px-1 font-mono text-slate-800">TGS-SQLCluster</code> rather than host names.</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- VIEW 4: FIREWALL PORTS & IP SUBNET MATRIX -->
+    <!-- ========================================= -->
+    <section id="view-network" class="tab-view hidden space-y-6">
+      
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900">Network Allocation & Firewall Port Matrix</h2>
+        <p class="text-sm text-slate-600 mt-1">
+          Use these tables to configure internal firewall security groups and IP subnets across your 12 servers.
+        </p>
+
+        <!-- Search Bar -->
+        <div class="mt-4">
+          <input type="text" id="network-search" onkeyup="searchNetworkTable()" placeholder="🔍 Search host, role, port, or subnet..." class="w-full sm:w-80 px-3.5 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500">
+        </div>
+      </div>
+
+      <!-- Server Inventory Table -->
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="px-5 py-3 border-b border-slate-200 bg-slate-50 font-bold text-slate-800 text-xs uppercase tracking-wider">
+          Complete Server Host Inventory
+        </div>
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left border-collapse" id="inventory-table">
+            <thead>
+              <tr class="bg-slate-100 text-slate-600 text-xs uppercase border-b border-slate-200">
+                <th class="p-3">Hostname</th>
+                <th class="p-3">Subnet / IP</th>
+                <th class="p-3">Role / Feature</th>
+                <th class="p-3">Clustering / Replication Mode</th>
+              </tr>
+            </thead>
+            <tbody class="text-xs divide-y divide-slate-100 text-slate-700">
+              <tr>
+                <td class="p-3 font-bold font-mono text-sky-700">TGS-DC-01</td>
+                <td class="p-3 font-mono text-slate-500">10.0.20.11</td>
+                <td class="p-3">Active Directory / DNS</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-semibold">Active/Active Sync with DC-02</span></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold font-mono text-sky-700">TGS-DC-02</td>
+                <td class="p-3 font-mono text-slate-500">10.0.20.12</td>
+                <td class="p-3">Active Directory / DNS</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-semibold">Active/Active Sync with DC-01</span></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold font-mono text-teal-700">TGS-FS-01</td>
+                <td class="p-3 font-mono text-slate-500">10.0.40.31</td>
+                <td class="p-3">File Services</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded bg-teal-100 text-teal-800 font-semibold">DFS Target 1 (Full Mesh DFS-R)</span></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold font-mono text-teal-700">TGS-FS-02</td>
+                <td class="p-3 font-mono text-slate-500">10.0.40.32</td>
+                <td class="p-3">File Services</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded bg-teal-100 text-teal-800 font-semibold">DFS Target 2 (Full Mesh DFS-R)</span></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold font-mono text-teal-700">TGS-FS-03</td>
+                <td class="p-3 font-mono text-slate-500">10.0.40.33</td>
+                <td class="p-3">File Services</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded bg-teal-100 text-teal-800 font-semibold">DFS Target 3 (Full Mesh DFS-R)</span></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold font-mono font-slate-800">TGS-GW-01</td>
+                <td class="p-3 font-mono text-slate-500">10.0.10.11</td>
+                <td class="p-3">Remote Access Gateway</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 font-semibold">RD Gateway NLB Cluster Node 1</span></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold font-mono font-slate-800">TGS-GW-02</td>
+                <td class="p-3 font-mono text-slate-500">10.0.10.12</td>
+                <td class="p-3">Remote Access Gateway</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 font-semibold">RD Gateway NLB Cluster Node 2</span></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold font-mono text-purple-700">TGS-RDS-01</td>
+                <td class="p-3 font-mono text-slate-500">10.0.30.21</td>
+                <td class="p-3">Application Compute</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded bg-purple-100 text-purple-800 font-semibold">RDS Session Host 1</span></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold font-mono text-purple-700">TGS-RDS-02</td>
+                <td class="p-3 font-mono text-slate-500">10.0.30.22</td>
+                <td class="p-3">Application Compute</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded bg-purple-100 text-purple-800 font-semibold">RDS Session Host 2</span></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold font-mono text-purple-700">TGS-RDS-03</td>
+                <td class="p-3 font-mono text-slate-500">10.0.30.23</td>
+                <td class="p-3">Application Compute</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded bg-purple-100 text-purple-800 font-semibold">RDS Session Host 3</span></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold font-mono text-amber-700">TGS-JMP-01</td>
+                <td class="p-3 font-mono text-slate-500">10.0.10.50</td>
+                <td class="p-3">Management Bastion</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-semibold">Isolated Admin Jump Box</span></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold font-mono text-rose-700">TGS-SQL-01</td>
+                <td class="p-3 font-mono text-slate-500">10.0.50.41</td>
+                <td class="p-3">Database Server</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-semibold">SQL FCI Cluster Node 1</span></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold font-mono text-rose-700">TGS-SQL-02</td>
+                <td class="p-3 font-mono text-slate-500">10.0.50.42</td>
+                <td class="p-3">Database Server</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-semibold">SQL FCI Cluster Node 2</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Firewall Port Rules Matrix -->
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mt-6">
+        <div class="px-5 py-3 border-b border-slate-200 bg-slate-50 font-bold text-slate-800 text-xs uppercase tracking-wider">
+          Required Inter-Tier Firewall Port Matrix
+        </div>
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-100 text-slate-600 text-xs uppercase border-b border-slate-200">
+                <th class="p-3">Source Zone</th>
+                <th class="p-3">Destination Target</th>
+                <th class="p-3">Port / Protocol</th>
+                <th class="p-3">Traffic Purpose</th>
+              </tr>
+            </thead>
+            <tbody class="text-xs divide-y divide-slate-100 text-slate-700">
+              <tr>
+                <td class="p-3 font-medium">External Clients</td>
+                <td class="p-3 font-mono">TGS-GW-01 / 02</td>
+                <td class="p-3 font-mono text-sky-700 font-bold">443 / TCP (HTTPS)</td>
+                <td class="p-3">RD Gateway Encrypted Client Tunnel</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium">RD Gateways</td>
+                <td class="p-3 font-mono">TGS-RDS-01 / 02 / 03</td>
+                <td class="p-3 font-mono text-sky-700 font-bold">3389 / TCP & UDP</td>
+                <td class="p-3">Proxied RDP Desktop Sessions</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium">Domain Controllers</td>
+                <td class="p-3 font-mono">TGS-DC-01 ↔ TGS-DC-02</td>
+                <td class="p-3 font-mono text-blue-700 font-bold">135, 445, 88, 389, 53</td>
+                <td class="p-3">AD DS Replication, Kerberos, DNS, SYSVOL DFSR</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium">File Servers</td>
+                <td class="p-3 font-mono">TGS-FS-01 ↔ 02 ↔ 03</td>
+                <td class="p-3 font-mono text-teal-700 font-bold">5722 / TCP & 445</td>
+                <td class="p-3">DFS Replication Mesh RPC & SMB Traffic</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium">RDS Session Hosts</td>
+                <td class="p-3 font-mono">TGS-FS-01 / 02 / 03</td>
+                <td class="p-3 font-mono text-teal-700 font-bold">445 / TCP (SMB)</td>
+                <td class="p-3">User Profile Disks (UPD) & FSLogix Storage Mounts</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium">RDS & App Hosts</td>
+                <td class="p-3 font-mono">TGS-SQL-01 / 02</td>
+                <td class="p-3 font-mono text-rose-700 font-bold">1433 / TCP & 5022</td>
+                <td class="p-3">SQL Database Access & AlwaysOn Sync Mirroring</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- VIEW 5: MASTER DEPLOYMENT CHECKLIST        -->
+    <!-- ========================================= -->
+    <section id="view-checklist" class="tab-view hidden space-y-6">
+      
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">Deployment Order Summary & Verification Checklist</h2>
+          <p class="text-sm text-slate-600 mt-1">
+            Track your deployment progress in real-time. Progress is automatically stored in your local browser cache.
+          </p>
+        </div>
+        <div class="bg-slate-100 p-3 rounded-lg border border-slate-200 text-right">
+          <span class="text-xs uppercase font-bold text-slate-500">Progress</span>
+          <p id="checklist-progress-text" class="text-lg font-extrabold text-sky-600">0 / 6 Completed (0%)</p>
+        </div>
+      </div>
+
+      <div class="space-y-3" id="checklist-container">
+        
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-start space-x-3 cursor-pointer" onclick="toggleChecklistItem(1)">
+          <input type="checkbox" id="chk-1" class="mt-1 w-5 h-5 text-sky-600 rounded">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">1. Deploy Domain Controllers (`TGS-DC-01` / `02`)</h3>
+            <p class="text-xs text-slate-600 mt-0.5">Promote primary DC, add secondary DC, and confirm SYSVOL DFSR replication health log status.</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-start space-x-3 cursor-pointer" onclick="toggleChecklistItem(2)">
+          <input type="checkbox" id="chk-2" class="mt-1 w-5 h-5 text-sky-600 rounded">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">2. Configure File Servers & DFS Storage Cluster (`TGS-FS-01` to `03`)</h3>
+            <p class="text-xs text-slate-600 mt-0.5">Build DFS-R full mesh replication group and establish domain namespace targets for user profiles.</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-start space-x-3 cursor-pointer" onclick="toggleChecklistItem(3)">
+          <input type="checkbox" id="chk-3" class="mt-1 w-5 h-5 text-sky-600 rounded">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">3. Setup SQL High Availability Cluster (`TGS-SQL-01` / `02`)</h3>
+            <p class="text-xs text-slate-600 mt-0.5">Configure WSFC, validate cluster nodes, and deploy SQL Failover Instance / AlwaysOn AG listener.</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-start space-x-3 cursor-pointer" onclick="toggleChecklistItem(4)">
+          <input type="checkbox" id="chk-4" class="mt-1 w-5 h-5 text-sky-600 rounded">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">4. Provision Administrative Bastion Jump Box (`TGS-JMP-01`)</h3>
+            <p class="text-xs text-slate-600 mt-0.5">Harden firewall policy, restrict administrative RDP to authorized admin subnets, and install RSAT.</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-start space-x-3 cursor-pointer" onclick="toggleChecklistItem(5)">
+          <input type="checkbox" id="chk-5" class="mt-1 w-5 h-5 text-sky-600 rounded">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">5. Deploy RD Gateway Cluster (`TGS-GW-01` / `02`)</h3>
+            <p class="text-xs text-slate-600 mt-0.5">Import trusted SSL SAN certs, set up Network Load Balancing, and configure RD CAP/RAP policies.</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-start space-x-3 cursor-pointer" onclick="toggleChecklistItem(6)">
+          <input type="checkbox" id="chk-6" class="mt-1 w-5 h-5 text-sky-600 rounded">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">6. Build RDS Session Host Farm (`TGS-RDS-01` to `03`)</h3>
+            <p class="text-xs text-slate-600 mt-0.5">Deploy RDS roles, bind collection to Gateway cluster, and point profile disks to DFS share paths.</p>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- COMPLETE END-TO-END SYSTEM CONNECTIVITY & NETWORK FLOW DIAGRAM    -->
+    <!-- ================================================================= -->
+    <section id="system-connectivity-diagram" class="mt-12 bg-slate-900 text-white p-6 sm:p-8 rounded-2xl border border-slate-800 shadow-2xl space-y-6">
+      
+      <!-- Header & Flow Selection Controls -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="px-2.5 py-0.5 rounded text-xs font-bold uppercase bg-sky-500/20 text-sky-400 border border-sky-500/30">Architecture Visualizer</span>
+            <span class="text-xs text-slate-400 font-mono">12-Server Infrastructure Mesh</span>
+          </div>
+          <h2 class="text-xl font-extrabold text-white mt-1">End-to-End System Connectivity & Network Flow Diagram</h2>
+          <p class="text-xs text-slate-400 mt-0.5">
+            Full architectural map showing how clients, load balancers, perimeter gateways, internal session compute, identity services, storage mesh, and SQL database clusters interconnect.
+          </p>
+        </div>
+
+        <!-- Connection Mode Filters -->
+        <div class="flex flex-wrap gap-2">
+          <button onclick="setFlowMode('all')" id="flow-btn-all" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-sky-600 text-white transition-all shadow-sm">Show All Paths</button>
+          <button onclick="setFlowMode('user')" id="flow-btn-user" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">User Sessions (443/3389)</button>
+          <button onclick="setFlowMode('admin')" id="flow-btn-admin" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">Admin Bastion Flow</button>
+          <button onclick="setFlowMode('storage')" id="flow-btn-storage" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">Storage & Profile Sync</button>
+          <button onclick="setFlowMode('db')" id="flow-btn-db" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all">SQL Cluster Traffic</button>
+        </div>
+      </div>
+
+      <!-- Main Diagram Canvas Grid Layout -->
+      <div class="space-y-8 relative">
+
+        <!-- LAYER 1: EXTERNAL ENTRY LAYER -->
+        <div class="space-y-2">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+            <span>🌐 Layer 1: External Client & Admin Ingress Zone</span>
+            <span class="h-px flex-1 bg-slate-800"></span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <!-- End User Client -->
+            <div id="diag-node-user-client" class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 hover:border-sky-500 transition-all">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-sky-400 flex items-center gap-1.5">
+                  <span>💻</span> Remote Desktop & Web Clients
+                </span>
+                <span class="text-[10px] font-mono px-2 py-0.5 bg-sky-900/60 text-sky-300 rounded">Public Internet</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-1.5">Standard users establishing remote application sessions.</p>
+              <div class="mt-3 pt-2 border-t border-slate-700/60 flex items-center justify-between text-[11px] font-mono">
+                <span class="text-slate-400">Target URL:</span>
+                <span class="text-sky-300 font-bold">https://rdg.tgs.local (Port 443)</span>
+              </div>
+            </div>
+
+            <!-- Administrative User -->
+            <div id="diag-node-admin-client" class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 hover:border-amber-500 transition-all">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                  <span>🔑</span> Administrative Workstations
+                </span>
+                <span class="text-[10px] font-mono px-2 py-0.5 bg-amber-900/60 text-amber-300 rounded">Secured Admin Subnet</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-1.5">Systems Engineers & IT Administrators accessing management tools.</p>
+              <div class="mt-3 pt-2 border-t border-slate-700/60 flex items-center justify-between text-[11px] font-mono">
+                <span class="text-slate-400">Target VIP:</span>
+                <span class="text-amber-300 font-bold">TGS-JMP-01 (10.0.10.50 via RDGW)</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- CONNECTOR ARROW LAYER 1 -> 2 -->
+        <div class="flex justify-center items-center py-1">
+          <div class="flex flex-col items-center">
+            <span id="flow-tag-ingress" class="px-3 py-1 rounded-full text-[11px] font-mono font-bold bg-sky-950 text-sky-400 border border-sky-800">
+              ▼ Inbound TLS 1.3 Tunnel (Port 443 / HTTPS Encrypted) ▼
+            </span>
+          </div>
+        </div>
+
+        <!-- LAYER 2: PERIMETER GATEWAY & BASTION ZONE -->
+        <div class="space-y-2">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+            <span>🛡️ Layer 2: Perimeter Gateway & NLB Cluster (Subnet: 10.0.10.0/24)</span>
+            <span class="h-px flex-1 bg-slate-800"></span>
+          </div>
+
+          <!-- NLB Virtual VIP Container -->
+          <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/80 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-700/60 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 bg-indigo-900/80 text-indigo-300 rounded text-xs font-bold">NLB Virtual Cluster VIP</span>
+                <span class="text-xs font-mono text-slate-300">10.0.10.10 (rdg.tgs.local)</span>
+              </div>
+              <span class="text-[10px] text-emerald-400 font-bold">● Active Load Balancing (Port 443)</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              
+              <!-- GW 01 -->
+              <div id="diag-node-gw1" class="bg-slate-900 p-3.5 rounded-lg border border-indigo-500/40 hover:border-indigo-400 transition-all">
+                <div class="flex justify-between items-center">
+                  <span class="text-xs font-bold text-indigo-300">TGS-GW-01</span>
+                  <span class="text-[10px] font-mono text-slate-400">10.0.10.11</span>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-1">RD Gateway / SSL Reverse Proxy Node 1</p>
+                <div class="mt-2 text-[10px] text-indigo-400 font-mono">RD CAP/RAP Enforced</div>
+              </div>
+
+              <!-- GW 02 -->
+              <div id="diag-node-gw2" class="bg-slate-900 p-3.5 rounded-lg border border-indigo-500/40 hover:border-indigo-400 transition-all">
+                <div class="flex justify-between items-center">
+                  <span class="text-xs font-bold text-indigo-300">TGS-GW-02</span>
+                  <span class="text-[10px] font-mono text-slate-400">10.0.10.12</span>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-1">RD Gateway / SSL Reverse Proxy Node 2</p>
+                <div class="mt-2 text-[10px] text-indigo-400 font-mono">RD CAP/RAP Enforced</div>
+              </div>
+
+              <!-- Admin Jumpbox -->
+              <div id="diag-node-jmp" class="bg-slate-900 p-3.5 rounded-lg border border-amber-500/50 hover:border-amber-400 transition-all">
+                <div class="flex justify-between items-center">
+                  <span class="text-xs font-bold text-amber-300">TGS-JMP-01</span>
+                  <span class="text-[10px] font-mono text-slate-400">10.0.10.50</span>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-1">Administrative Bastion Host</p>
+                <div class="mt-2 text-[10px] text-amber-400 font-mono">RSAT Tools / PowerShell Console</div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- FIREWALL BOUNDARY BANNER -->
+        <div class="my-4 p-3 bg-slate-950 rounded-xl border border-rose-900/50 flex flex-wrap items-center justify-between text-xs gap-3">
+          <div class="flex items-center space-x-2 text-rose-400 font-bold">
+            <span class="text-base">🔥</span>
+            <span>INTERNAL ENTERPRISE FIREWALL BARRIER</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-3 text-[11px] font-mono text-slate-300">
+            <span class="px-2 py-0.5 bg-slate-800 rounded border border-slate-700">RDP Target: Port 3389</span>
+            <span class="px-2 py-0.5 bg-slate-800 rounded border border-slate-700">SMB Profiles: Port 445</span>
+            <span class="px-2 py-0.5 bg-slate-800 rounded border border-slate-700">SQL Data: Port 1433</span>
+            <span class="px-2 py-0.5 bg-slate-800 rounded border border-slate-700">AD/DNS: 135/88/389</span>
+          </div>
+        </div>
+
+        <!-- LAYER 3: INTERNAL CORE SERVICES (3 COLUMNS: IDENTITY, COMPUTE, STORAGE/DB) -->
+        <div class="space-y-2">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+            <span>⚙️ Layer 3: Internal Tiered Server Infrastructure</span>
+            <span class="h-px flex-1 bg-slate-800"></span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- TIER 1: IDENTITY COLUMN -->
+            <div class="bg-slate-800/40 p-4 rounded-xl border border-blue-900/40 space-y-3" id="diag-group-identity">
+              <div class="flex items-center justify-between border-b border-slate-700/50 pb-2">
+                <span class="text-xs font-bold text-blue-400">Tier 1: Identity & Directory</span>
+                <span class="text-[10px] font-mono text-slate-400">10.0.20.0/24</span>
+              </div>
+
+              <!-- DC-01 -->
+              <div id="diag-node-dc1" class="bg-slate-900 p-3 rounded-lg border border-blue-500/30">
+                <div class="flex justify-between items-center text-xs font-bold text-blue-300">
+                  <span>TGS-DC-01</span>
+                  <span class="text-[10px] font-mono text-slate-400">10.0.20.11</span>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-1">Active Directory DS / DNS / Kerberos</p>
+              </div>
+
+              <!-- DC-02 -->
+              <div id="diag-node-dc2" class="bg-slate-900 p-3 rounded-lg border border-blue-500/30">
+                <div class="flex justify-between items-center text-xs font-bold text-blue-300">
+                  <span>TGS-DC-02</span>
+                  <span class="text-[10px] font-mono text-slate-400">10.0.20.12</span>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-1">Secondary DC / Active Replicated Sync</p>
+              </div>
+
+              <!-- AD Replication Channel Tag -->
+              <div id="flow-line-ad-sync" class="p-2 rounded bg-blue-950/60 border border-blue-800/60 text-center text-[10px] font-mono text-blue-300">
+                ⇄ Bi-Directional SYSVOL & AD Replication (DFSR / RPC)
+              </div>
+            </div>
+
+            <!-- TIER 2: COMPUTE COLUMN -->
+            <div class="bg-slate-800/40 p-4 rounded-xl border border-purple-900/40 space-y-3" id="diag-group-compute">
+              <div class="flex items-center justify-between border-b border-slate-700/50 pb-2">
+                <span class="text-xs font-bold text-purple-400">Tier 2: Application Compute</span>
+                <span class="text-[10px] font-mono text-slate-400">10.0.30.0/24</span>
+              </div>
+
+              <!-- RDS-01 -->
+              <div id="diag-node-rds1" class="bg-slate-900 p-2.5 rounded-lg border border-purple-500/30">
+                <div class="flex justify-between items-center text-xs font-bold text-purple-300">
+                  <span>TGS-RDS-01</span>
+                  <span class="text-[10px] font-mono text-slate-400">10.0.30.21</span>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-0.5">RDS App Compute Host 1</p>
+              </div>
+
+              <!-- RDS-02 -->
+              <div id="diag-node-rds2" class="bg-slate-900 p-2.5 rounded-lg border border-purple-500/30">
+                <div class="flex justify-between items-center text-xs font-bold text-purple-300">
+                  <span>TGS-RDS-02</span>
+                  <span class="text-[10px] font-mono text-slate-400">10.0.30.22</span>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-0.5">RDS App Compute Host 2</p>
+              </div>
+
+              <!-- RDS-03 -->
+              <div id="diag-node-rds3" class="bg-slate-900 p-2.5 rounded-lg border border-purple-500/30">
+                <div class="flex justify-between items-center text-xs font-bold text-purple-300">
+                  <span>TGS-RDS-03</span>
+                  <span class="text-[10px] font-mono text-slate-400">10.0.30.23</span>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-0.5">RDS App Compute Host 3</p>
+              </div>
+
+              <!-- Dynamic Load Balance Tag -->
+              <div id="flow-line-rds-farm" class="p-2 rounded bg-purple-950/60 border border-purple-800/60 text-center text-[10px] font-mono text-purple-300">
+                ⬇ Session Broker Load Balanced Farm Allocation
+              </div>
+            </div>
+
+            <!-- TIER 3 & 4: STORAGE & DATABASE COLUMN -->
+            <div class="bg-slate-800/40 p-4 rounded-xl border border-teal-900/40 space-y-3" id="diag-group-storage-db">
+              <div class="flex items-center justify-between border-b border-slate-700/50 pb-2">
+                <span class="text-xs font-bold text-teal-400">Tier 3 & Tier 4: Storage & DB</span>
+                <span class="text-[10px] font-mono text-slate-400">10.0.40.0 / 10.0.50.0</span>
+              </div>
+
+              <!-- DFS Filesystem Box -->
+              <div class="bg-slate-900 p-3 rounded-lg border border-teal-500/30 space-y-1.5">
+                <div class="flex justify-between items-center text-xs font-bold text-teal-300">
+                  <span>DFS Replication Mesh (3 Nodes)</span>
+                  <span class="text-[10px] font-mono text-teal-400">Port 5722 / 445</span>
+                </div>
+                <div class="grid grid-cols-3 gap-1 text-center text-[10px] font-mono text-slate-300">
+                  <span id="diag-node-fs1" class="bg-slate-800 py-1 rounded">FS-01</span>
+                  <span id="diag-node-fs2" class="bg-slate-800 py-1 rounded">FS-02</span>
+                  <span id="diag-node-fs3" class="bg-slate-800 py-1 rounded">FS-03</span>
+                </div>
+                <p class="text-[10px] text-slate-400">Namespace: <code class="text-teal-300">\\tgs.local\corporate</code></p>
+              </div>
+
+              <!-- SQL Cluster Box -->
+              <div class="bg-slate-900 p-3 rounded-lg border border-rose-500/30 space-y-1.5">
+                <div class="flex justify-between items-center text-xs font-bold text-rose-300">
+                  <span>SQL AlwaysOn / WSFC Cluster</span>
+                  <span class="text-[10px] font-mono text-rose-400">Port 1433 / 5022</span>
+                </div>
+                <div class="grid grid-cols-2 gap-1.5 text-center text-[10px] font-mono">
+                  <span id="diag-node-sql1" class="bg-slate-800 text-rose-300 py-1 rounded">SQL-01 (Primary)</span>
+                  <span id="diag-node-sql2" class="bg-slate-800 text-amber-300 py-1 rounded">SQL-02 (Standby)</span>
+                </div>
+                <p class="text-[10px] text-slate-400">Virtual VIP Name: <code class="text-rose-300">TGS-SQLCluster</code></p>
+              </div>
+
+              <div id="flow-line-storage-sync" class="p-2 rounded bg-teal-950/60 border border-teal-800/60 text-center text-[10px] font-mono text-teal-300">
+                🔄 Continuous Full-Mesh Data & Log Mirroring
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!-- DIAGRAM SUMMARY EXPLANATION BANNER -->
+        <div id="flow-explanation-box" class="bg-slate-950 p-4 rounded-xl border border-sky-900/40 text-xs text-slate-300 space-y-1">
+          <span class="font-bold text-sky-400 uppercase tracking-wider text-[10px]">Active Connectivity Explanation:</span>
+          <p id="flow-explanation-text">
+            Viewing <strong>All Network Paths</strong>: HTTPS (443) traffic enters via the RD Gateway NLB cluster VIP. Gateways proxy RDP sessions (3389) to RDS hosts. RDS hosts mount profiles over SMB (445) from DFS storage targets and query database records from the SQL Failover Cluster Instance (1433).
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- Dynamic Server Inspection Modal Slide-Over -->
+  <div id="inspector-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex justify-end transition-opacity">
+    <div class="bg-white w-full max-w-md h-full shadow-2xl p-6 overflow-y-auto custom-scrollbar flex flex-col justify-between">
+      <div>
+        <div class="flex justify-between items-center border-b border-slate-200 pb-3">
+          <div>
+            <span id="modal-node-tier" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-sky-100 text-sky-800 rounded">Tier Tag</span>
+            <h3 id="modal-node-title" class="text-xl font-bold text-slate-900 mt-1">Host Title</h3>
+          </div>
+          <button onclick="closeModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold p-1" aria-label="Close modal">×</button>
+        </div>
+
+        <div class="mt-4 space-y-4 text-xs text-slate-600">
+          <div>
+            <span class="font-bold text-slate-800 uppercase tracking-wider text-[10px]">Primary Function</span>
+            <p id="modal-node-role" class="mt-0.5 text-slate-700 font-medium">Role description...</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-lg border border-slate-200">
+            <div>
+              <span class="font-bold text-slate-800 text-[10px] uppercase">IP Address</span>
+              <p id="modal-node-ip" class="font-mono text-sky-700 font-semibold">10.0.0.0</p>
+            </div>
+            <div>
+              <span class="font-bold text-slate-800 text-[10px] uppercase">Redundancy Mode</span>
+              <p id="modal-node-ha" class="font-semibold text-slate-700">Cluster</p>
+            </div>
+          </div>
+
+          <div>
+            <span class="font-bold text-slate-800 uppercase tracking-wider text-[10px]">Technical Setup Summary</span>
+            <ul id="modal-node-steps" class="list-disc pl-4 space-y-1 mt-1 text-slate-600">
+              <li>Step 1</li>
+            </ul>
+          </div>
+
+          <div class="bg-sky-50 p-3 rounded-lg border border-sky-100">
+            <span class="font-bold text-sky-900 text-[10px] uppercase">Inbound / Outbound Ports</span>
+            <p id="modal-node-ports" class="font-mono text-sky-800 mt-0.5">Port list</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-3 border-t border-slate-200">
+        <button onclick="closeModal()" class="w-full py-2 bg-slate-900 text-white rounded-lg font-bold text-xs hover:bg-slate-800 transition-colors">
+          Close Diagnostic Window
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-4 mt-8 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4">
+      Enterprise Server Deployment & Topology Suite • TGS Architecture Framework
+    </div>
+  </footer>
+
+
+  <!-- Embedded Vanilla JavaScript Application Logic -->
+  <script>
+    // Server Nodes Data Model
+    const serverData = {
+      'TGS-DC-01': {
+        title: 'TGS-DC-01',
+        tier: 'Tier 1: Identity',
+        role: 'Primary Active Directory Domain Controller & DNS Server',
+        ip: '10.0.20.11',
+        ha: 'Active/Active Sync (DC-02)',
+        ports: '135, 445 (SMB), 88 (Kerberos), 389 (LDAP), 53 (DNS)',
+        steps: [
+          'Install AD DS and DNS Server Roles.',
+          'Promote server to create forest root domain tgs.local.',
+          'Verify initial SYSVOL directory structure.'
+        ]
+      },
+      'TGS-DC-02': {
+        title: 'TGS-DC-02',
+        tier: 'Tier 1: Identity',
+        role: 'Secondary Active Directory Domain Controller & DNS Server',
+        ip: '10.0.20.12',
+        ha: 'Active/Active Sync (DC-01)',
+        ports: '135, 445, 88, 389, 53',
+        steps: [
+          'Install AD DS and DNS roles.',
+          'Promote as additional DC in existing tgs.local domain.',
+          'Confirm DFSR Event IDs 4602/4614 for SYSVOL sync.'
+        ]
+      },
+      'TGS-FS-01': {
+        title: 'TGS-FS-01',
+        tier: 'Tier 3: File Storage',
+        role: 'DFS Namespace Target 1 & Replicated Share Host',
+        ip: '10.0.40.31',
+        ha: 'Full Mesh DFS-R (3 Nodes)',
+        ports: '5722 (DFSR RPC), 445 (SMB)',
+        steps: [
+          'Install File Server, DFS Namespaces, and DFS Replication.',
+          'Create folder C:\\Shares\\CompanyData.',
+          'Add node to Multipurpose Replication Group.'
+        ]
+      },
+      'TGS-FS-02': {
+        title: 'TGS-FS-02',
+        tier: 'Tier 3: File Storage',
+        role: 'DFS Namespace Target 2 & Replicated Share Host',
+        ip: '10.0.40.32',
+        ha: 'Full Mesh DFS-R (3 Nodes)',
+        ports: '5722 (DFSR RPC), 445 (SMB)',
+        steps: [
+          'Install DFS Features via PowerShell.',
+          'Establish local folder path C:\\Shares\\CompanyData.',
+          'Join full mesh continuous replication schedule.'
+        ]
+      },
+      'TGS-FS-03': {
+        title: 'TGS-FS-03',
+        tier: 'Tier 3: File Storage',
+        role: 'DFS Namespace Target 3 & Replicated Share Host',
+        ip: '10.0.40.33',
+        ha: 'Full Mesh DFS-R (3 Nodes)',
+        ports: '5722 (DFSR RPC), 445 (SMB)',
+        steps: [
+          'Configure DFS role and local share paths.',
+          'Connect folder target to \\\\tgs.local\\corporate.',
+          'Enable referral tracking for auto failover.'
+        ]
+      },
+      'TGS-GW-01': {
+        title: 'TGS-GW-01',
+        tier: 'Perimeter Gateway',
+        role: 'Remote Desktop Gateway Node 1 & SSL Reverse Proxy',
+        ip: '10.0.10.11',
+        ha: 'Network Load Balanced (NLB)',
+        ports: '443 (Inbound HTTPS), 3389 (Internal RDP Proxy)',
+        steps: [
+          'Install Remote Desktop Gateway service.',
+          'Bind SSL SAN certificate matching *.tgs.local.',
+          'Configure NLB cluster VIP and RD CAP/RAP policies.'
+        ]
+      },
+      'TGS-GW-02': {
+        title: 'TGS-GW-02',
+        tier: 'Perimeter Gateway',
+        role: 'Remote Desktop Gateway Node 2 & SSL Reverse Proxy',
+        ip: '10.0.10.12',
+        ha: 'Network Load Balanced (NLB)',
+        ports: '443 (Inbound HTTPS), 3389 (Internal RDP Proxy)',
+        steps: [
+          'Install Remote Desktop Gateway service.',
+          'Import wildcard SSL certificate.',
+          'Join NLB cluster pair with GW-01.'
+        ]
+      },
+      'TGS-RDS-01': {
+        title: 'TGS-RDS-01',
+        tier: 'Tier 2: Compute',
+        role: 'RDS Session Host 1 - Application Server',
+        ip: '10.0.30.21',
+        ha: 'Load Balanced Collection',
+        ports: '3389 (RDP Inbound from Gateway)',
+        steps: [
+          'Deploy RD Session Host role.',
+          'Assign to Session Collection managed by Gateway farm.',
+          'Map User Profile Disks (UPD) to DFS storage path.'
+        ]
+      },
+      'TGS-RDS-02': {
+        title: 'TGS-RDS-02',
+        tier: 'Tier 2: Compute',
+        role: 'RDS Session Host 2 - Application Server',
+        ip: '10.0.30.22',
+        ha: 'Load Balanced Collection',
+        ports: '3389 (RDP Inbound from Gateway)',
+        steps: [
+          'Install Session Host role features.',
+          'Configure relative connection load balancing weight.',
+          'Bind FSLogix / UPD containers to DFS share.'
+        ]
+      },
+      'TGS-RDS-03': {
+        title: 'TGS-RDS-03',
+        tier: 'Tier 2: Compute',
+        role: 'RDS Session Host 3 - Application Server',
+        ip: '10.0.30.23',
+        ha: 'Load Balanced Collection',
+        ports: '3389 (RDP Inbound from Gateway)',
+        steps: [
+          'Deploy Session Host role.',
+          'Join session farm collection.',
+          'Verify gateway bypass rules for internal subnets.'
+        ]
+      },
+      'TGS-JMP-01': {
+        title: 'TGS-JMP-01',
+        tier: 'Management Bastion',
+        role: 'Secure Administrative Jump Box Host',
+        ip: '10.0.10.50',
+        ha: 'Isolated Management Node',
+        ports: '3389 (Restricted to Admin Subnet)',
+        steps: [
+          'Deploy Windows Server base image.',
+          'Enforce strict firewall ingress restrictions.',
+          'Install Remote Server Administration Tools (RSAT).'
+        ]
+      },
+      'TGS-SQL-01': {
+        title: 'TGS-SQL-01',
+        tier: 'Tier 4: Database Cluster',
+        role: 'SQL Failover Cluster Instance / Always On Node 1',
+        ip: '10.0.50.41',
+        ha: 'WSFC Active/Standby Cluster',
+        ports: '1433 (SQL Data), 5022 (Always On Mirroring)',
+        steps: [
+          'Install Failover Clustering feature.',
+          'Execute cluster validation wizard.',
+          'Install SQL Failover Cluster Instance (FCI) setup.'
+        ]
+      },
+      'TGS-SQL-02': {
+        title: 'TGS-SQL-02',
+        tier: 'Tier 4: Database Cluster',
+        role: 'SQL Failover Cluster Instance / Always On Node 2',
+        ip: '10.0.50.42',
+        ha: 'WSFC Active/Standby Cluster',
+        ports: '1433 (SQL Data), 5022 (Always On Mirroring)',
+        steps: [
+          'Install Failover Clustering feature.',
+          'Add node to existing WSFC cluster.',
+          'Run SQL Server installation to add node to FCI.'
+        ]
+      }
+    };
+
+    // Tab Navigation Switcher Logic
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-sky-600', 'text-white');
+        btn.classList.add('text-slate-300', 'hover:text-white', 'hover:bg-slate-800');
+      });
+
+      const selectedView = document.getElementById(`view-${tabId}`);
+      if (selectedView) selectedView.classList.remove('hidden');
+
+      const selectedNav = document.getElementById(`nav-${tabId}`);
+      if (selectedNav) {
+        selectedNav.classList.remove('text-slate-300', 'hover:text-white', 'hover:bg-slate-800');
+        selectedNav.classList.add('bg-sky-600', 'text-white');
+      }
+    }
+
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    }
+
+    function scrollToDiagram() {
+      // Ensure we are on topology view or visible main area
+      switchTab('topology');
+      const diagElem = document.getElementById('system-connectivity-diagram');
+      if (diagElem) {
+        diagElem.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Guide Tab Switcher Logic
+    function switchGuideTab(tierId) {
+      document.querySelectorAll('.guide-content-panel').forEach(panel => panel.classList.add('hidden'));
+      document.querySelectorAll('.guide-tab-btn').forEach(btn => {
+        btn.classList.remove('bg-sky-600', 'text-white');
+        btn.classList.add('bg-slate-100', 'text-slate-700', 'hover:bg-slate-200');
+      });
+
+      const targetPanel = document.getElementById(`guide-content-${tierId}`);
+      if (targetPanel) targetPanel.classList.remove('hidden');
+
+      const targetBtn = document.getElementById(`tab-${tierId}`);
+      if (targetBtn) {
+        targetBtn.classList.remove('bg-slate-100', 'text-slate-700', 'hover:bg-slate-200');
+        targetBtn.classList.add('bg-sky-600', 'text-white');
+      }
+    }
+
+    // Filter Topology Cards
+    function filterTopologyNodes() {
+      const selected = document.getElementById('topology-tier-filter').value;
+      const groups = document.querySelectorAll('.topology-tier-group');
+
+      groups.forEach(group => {
+        if (selected === 'all' || group.id === selected) {
+          group.classList.remove('hidden');
+        } else {
+          group.classList.add('hidden');
         }
+      });
+    }
 
-        const canvas = document.getElementById('blueprintCanvas');
-        const ctx = canvas.getContext('2d');
+    // Node Diagnostic Modal Inspector
+    function inspectNode(nodeKey) {
+      const data = serverData[nodeKey];
+      if (!data) return;
 
-        const lanes = [
-            { id: 1, title: "DNS / ROUTING LAYER", color: "#0d9488", y: 40, height: 130 },
-            { id: 2, title: "CUSTOMER ACTIONS // SECURE PORTALS", color: "#4f46e5", y: 220, height: 130 },
-            { id: 3, title: "ON-STAGE // INTERNAL OPERATIONS", color: "#1e293b", y: 400, height: 130 },
-            { id: 4, title: "BACKSTAGE // AI & AUTOMATION", color: "#0f766e", y: 580, height: 130 },
-            { id: 5, title: "SUPPORT PROCESS // SERVER & GITHUB", color: "#3b82f6", y: 760, height: 130 }
-        ];
+      document.getElementById('modal-node-title').textContent = data.title;
+      document.getElementById('modal-node-tier').textContent = data.tier;
+      document.getElementById('modal-node-role').textContent = data.role;
+      document.getElementById('modal-node-ip').textContent = data.ip;
+      document.getElementById('modal-node-ha').textContent = data.ha;
+      document.getElementById('modal-node-ports').textContent = data.ports;
 
-        const cards = [
-            // Lane 1: DNS & Edge Touchpoints (Indices 0 to 5)
-            { lane: 1, x: 230, y: 70, w: 170, h: 75, title: "www", sub: "CNAME -> github.io", icon: "🌐" },
-            { lane: 1, x: 415, y: 70, w: 170, h: 75, title: "ai", sub: "CNAME -> github.io", icon: "🤖" },
-            { lane: 1, x: 600, y: 70, w: 170, h: 75, title: "sharepoint", sub: "CNAME -> github.io", icon: "📁" },
-            { lane: 1, x: 785, y: 70, w: 170, h: 75, title: "support", sub: "CNAME -> github.io", icon: "📞" },
-            { lane: 1, x: 970, y: 70, w: 170, h: 75, title: "training", sub: "CNAME -> github.io", icon: "🎓" },
-            { lane: 1, x: 1155, y: 70, w: 215, h: 75, title: "dcp / helpdesk", sub: "A -> 185.249.72.233", icon: "🖥️" },
+      const stepsList = document.getElementById('modal-node-steps');
+      stepsList.innerHTML = '';
+      data.steps.forEach(step => {
+        const li = document.createElement('li');
+        li.textContent = step;
+        stepsList.appendChild(li);
+      });
 
-            // Lane 2: Secure Portals (Indices 6 to 9)
-            { lane: 2, x: 250, y: 250, w: 260, h: 75, title: "portal.techgrid-systems", sub: "A: 185.249.72.233", icon: "🛡️" },
-            { lane: 2, x: 530, y: 250, w: 260, h: 75, title: "dcp.techgrid-systems", sub: "A: 185.249.72.233", icon: "🎛️" },
-            { lane: 2, x: 810, y: 250, w: 270, h: 75, title: "helpdesk.techgrid-systems", sub: "A: 185.249.72.233", icon: "🎫" },
-            { lane: 2, x: 1090, y: 250, w: 260, h: 75, title: "status.techgrid-systems", sub: "A: 185.249.72.233", icon: "📊" },
+      document.getElementById('inspector-modal').classList.remove('hidden');
+    }
 
-            // Lane 3: Internal Operations (Indices 10 to 12)
-            { lane: 3, x: 250, y: 430, w: 320, h: 75, title: "locallinesystems.techgrid", sub: "A: 185.249.72.233", icon: "📡" },
-            { lane: 3, x: 590, y: 430, w: 340, h: 75, title: "notes.techgrid-systems", sub: "A: 185.249.72.233", icon: "📝" },
-            { lane: 3, x: 950, y: 430, w: 400, h: 75, title: "password-vault.techgrid-systems", sub: "A: 185.249.72.233", icon: "🔐" },
+    function closeModal() {
+      document.getElementById('inspector-modal').classList.add('hidden');
+    }
 
-            // Lane 4: Backstage AI & Workflows (Indices 13 to 15)
-            { lane: 4, x: 250, y: 610, w: 340, h: 75, title: "ai.techgrid-systems", sub: "CNAME: techgrid-systems.github.io", icon: "⚡" },
-            { lane: 4, x: 610, y: 610, w: 360, h: 75, title: "training.techgrid-systems", sub: "CNAME: techgrid-systems.github.io", icon: "📘" },
-            { lane: 4, x: 990, y: 610, w: 360, h: 75, title: "sharepoint.techgrid-systems", sub: "CNAME: techgrid-systems.github.io", icon: "🔗" },
-
-            // Lane 5: Infrastructure & Repositories (Indices 16 to 18)
-            { lane: 5, x: 250, y: 790, w: 340, h: 75, title: "Ubuntu Server Host", sub: "IP: 185.249.72.233 (/var/www/)", icon: "🐧" },
-            { lane: 5, x: 610, y: 790, w: 360, h: 75, title: "tgs-cpanel Wrapper", sub: "A: 185.249.72.233", icon: "🛠️" },
-            { lane: 5, x: 990, y: 790, w: 360, h: 75, title: "GitHub Repositories", sub: "techgrid-systems.github.io", icon: "🐙" }
-        ];
-
-        function drawBlueprint() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = "#0b101d";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            lanes.forEach((lane, index) => {
-                ctx.fillStyle = lane.color;
-                ctx.fillRect(0, lane.y, 220, lane.height);
-
-                ctx.fillStyle = index % 2 === 0 ? "#0f172a" : "#111827";
-                ctx.fillRect(220, lane.y, canvas.width - 220, lane.height);
-
-                ctx.strokeStyle = "#1e293b";
-                ctx.lineWidth = 2;
-                ctx.strokeRect(0, lane.y, canvas.width, lane.height);
-
-                ctx.fillStyle = "#ffffff";
-                ctx.font = "bold 11px 'Courier New', monospace";
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
-                
-                wrapText(ctx, lane.title, 110, lane.y + lane.height / 2, 200, 16);
-            });
-
-            const boundaryYs = [190, 370, 550, 730];
-            const boundaryTitles = [
-                "DNS ROUTING BOUNDARY",
-                "SECURE PORTAL LAYER",
-                "INTERNAL OPS & SECRETS",
-                "GITHUB PAGES & SERVER MOUNT"
-            ];
-
-            boundaryYs.forEach((by, idx) => {
-                ctx.strokeStyle = "#38bdf8";
-                ctx.lineWidth = 3;
-                ctx.setLineDash([6, 4]);
-                ctx.beginPath();
-                ctx.moveTo(220, by);
-                ctx.lineTo(canvas.width, by);
-                ctx.stroke();
-                ctx.setLineDash([]);
-
-                ctx.fillStyle = "#0b101d";
-                ctx.fillRect(240, by - 10, 240, 20);
-                ctx.strokeStyle = "#38bdf8";
-                ctx.lineWidth = 1;
-                ctx.strokeRect(240, by - 10, 240, 20);
-
-                ctx.fillStyle = "#38bdf8";
-                ctx.font = "bold 10px 'Courier New', monospace";
-                ctx.textAlign = "center";
-                ctx.textBaseline = "middle";
-                ctx.fillText(boundaryTitles[idx], 360, by);
-            });
-
-            cards.forEach(card => {
-                ctx.fillStyle = "#ffffff";
-                ctx.strokeStyle = "#cbd5e1";
-                ctx.lineWidth = 1;
-                roundedRect(ctx, card.x, card.y, card.w, card.h, 6, true, true);
-
-                ctx.fillStyle = "#1e293b";
-                ctx.font = "14px sans-serif";
-                ctx.textAlign = "left";
-                ctx.textBaseline = "top";
-                ctx.fillText(card.icon, card.x + 10, card.y + 12);
-
-                ctx.font = "bold 10px 'Courier New', monospace";
-                ctx.fillText(card.title, card.x + 35, card.y + 10, card.w - 45);
-
-                ctx.fillStyle = "#64748b";
-                ctx.font = "9px 'Courier New', monospace";
-                ctx.fillText(card.sub, card.x + 35, card.y + 35, card.w - 45);
-            });
+    // Interactive System Connectivity Flow Highlighting Engine
+    function setFlowMode(mode) {
+      const buttons = ['all', 'user', 'admin', 'storage', 'db'];
+      buttons.forEach(b => {
+        const btn = document.getElementById(`flow-btn-${b}`);
+        if (btn) {
+          if (b === mode) {
+            btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-sky-600 text-white transition-all shadow-sm';
+          } else {
+            btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all';
+          }
         }
+      });
 
-        function roundedRect(ctx, x, y, width, height, radius, fill, stroke) {
-            ctx.beginPath();
-            ctx.moveTo(x + radius, y);
-            ctx.lineTo(x + width - radius, y);
-            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-            ctx.lineTo(x + width, y + height - radius);
-            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-            ctx.lineTo(x + radius, y + height);
-            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-            ctx.lineTo(x, y + radius);
-            ctx.quadraticCurveTo(x, y, x + radius, y);
-            ctx.closePath();
-            if (fill) ctx.fill();
-            if (stroke) ctx.stroke();
-        }
+      const textElem = document.getElementById('flow-explanation-text');
 
-        function wrapText(context, text, x, y, maxWidth, lineHeight) {
-            const words = text.split(' ');
-            let line = '';
-            let currentY = y;
+      if (mode === 'user') {
+        textElem.innerHTML = 'Showing <strong>User Desktop Session Flow</strong>: Remote clients connect over HTTPS (Port 443) to the Gateway VIP (10.0.10.10). Gateways proxy sessions over RDP (Port 3389) into RDS Session Hosts (TGS-RDS-01, 02, 03). Hosts query AD (TGS-DC-01/02) for user authentication.';
+      } else if (mode === 'admin') {
+        textElem.innerHTML = 'Showing <strong>Admin Bastion Flow</strong>: System administrators authenticate through RD Gateway specifically to administrative Bastion <strong>TGS-JMP-01 (10.0.10.50)</strong>. RSAT tools and PowerShell scripts execute management commands directly to internal subnets.';
+      } else if (mode === 'storage') {
+        textElem.innerHTML = 'Showing <strong>Storage & Profile Replication Flow</strong>: RDS Session hosts mount User Profile Disks (UPD) over SMB (Port 445) from namespace target <code class="text-teal-300">\\\\tgs.local\\corporate</code>. DFS Replication (Port 5722) maintains instant full-mesh data sync across FS-01, FS-02, and FS-03.';
+      } else if (mode === 'db') {
+        textElem.innerHTML = 'Showing <strong>SQL Cluster Data Traffic</strong>: LOB applications running on RDS Session Hosts query database records via Virtual VIP <code class="text-rose-300">TGS-SQLCluster</code> on Port 1433. Database transaction logs mirror synchronously (Port 5022) to standby node TGS-SQL-02.';
+      } else {
+        textElem.innerHTML = 'Viewing <strong>All Network Paths</strong>: HTTPS (443) traffic enters via the RD Gateway NLB cluster VIP. Gateways proxy RDP sessions (3389) to RDS hosts. RDS hosts mount profiles over SMB (445) from DFS storage targets and query database records from the SQL Failover Cluster Instance (1433).';
+      }
+    }
 
-            if (words.length > 1) {
-                currentY -= lineHeight / 2;
-            }
+    // Failover Simulation Engine
+    function runFailoverSimulation() {
+      const gw1 = document.getElementById('sim-gw1').checked;
+      const gw2 = document.getElementById('sim-gw2').checked;
+      const fs1 = document.getElementById('sim-fs1').checked;
+      const fs2 = document.getElementById('sim-fs2').checked;
+      const fs3 = document.getElementById('sim-fs3').checked;
+      const sql1 = document.getElementById('sim-sql1').checked;
+      const sql2 = document.getElementById('sim-sql2').checked;
 
-            for (let n = 0; n < words.length; n++) {
-                const testLine = line + words[n] + ' ';
-                const metrics = context.measureText(testLine);
-                const testWidth = metrics.width;
-                if (testWidth > maxWidth && n > 0) {
-                    context.fillText(line, x, currentY);
-                    line = words[n] + ' ';
-                    currentY += lineHeight;
-                } else {
-                    line = testLine;
+      const badgeGw = document.getElementById('badge-gw');
+      const descGw = document.getElementById('desc-gw');
+      if (gw1 && gw2) {
+        badgeGw.className = 'px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800';
+        badgeGw.textContent = 'HEALTHY (100% Capacity)';
+        descGw.textContent = 'Both Gateway nodes active. Incoming SSL connections balanced across TGS-GW-01 and TGS-GW-02.';
+      } else if (gw1 || gw2) {
+        const activeNode = gw1 ? 'TGS-GW-01' : 'TGS-GW-02';
+        badgeGw.className = 'px-2.5 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-800';
+        badgeGw.textContent = `DEGRADED - FAULT TOLERANT (${activeNode})`;
+        descGw.textContent = `One Gateway offline! Network Load Balancer successfully redirected all incoming 443 traffic to ${activeNode}. No session dropouts occurred.`;
+        appendLog(`[FAILOVER EVENT] Gateway node lost. NLB redirected traffic exclusively to ${activeNode}.`);
+      } else {
+        badgeGw.className = 'px-2.5 py-1 text-xs font-bold rounded-full bg-rose-100 text-rose-800';
+        badgeGw.textContent = 'CRITICAL OUTAGE (0 Gateways)';
+        descGw.textContent = 'Both RD Gateways are down! External users cannot establish RDP connections.';
+        appendLog(`[ALERT] Total RD Gateway perimeter failure. Inbound tunnels unreachable!`);
+      }
+
+      // DFS Storage Check
+      const activeFsCount = [fs1, fs2, fs3].filter(Boolean).length;
+      const badgeFs = document.getElementById('badge-fs');
+      const descFs = document.getElementById('desc-fs');
+      if (activeFsCount === 3) {
+        badgeFs.className = 'px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800';
+        badgeFs.textContent = 'FULLY REPLICATED (3/3 Nodes)';
+        descFs.textContent = 'Full mesh DFS-R active across all file servers.';
+      } else if (activeFsCount > 0) {
+        badgeFs.className = 'px-2.5 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-800';
+        badgeFs.textContent = `SURVIVABLE MESH (${activeFsCount}/3 Nodes Active)`;
+        descFs.textContent = 'DFS Namespace referral target auto-routed clients away from offline target(s). Profile storage remains accessible.';
+        appendLog(`[STORAGE REROUTE] DFS referral updated. Serving files from ${activeFsCount} healthy DFS node(s).`);
+      } else {
+        badgeFs.className = 'px-2.5 py-1 text-xs font-bold rounded-full bg-rose-100 text-rose-800';
+        badgeFs.textContent = 'STORAGE OUTAGE (0 File Hosts)';
+        descFs.textContent = 'All file targets offline! RDS session hosts cannot load User Profile Disks (UPD).';
+        appendLog(`[ALERT] DFS Storage namespace unavailable.`);
+      }
+
+      // SQL Cluster Check
+      const badgeSql = document.getElementById('badge-sql');
+      const descSql = document.getElementById('desc-sql');
+      if (sql1) {
+        badgeSql.className = 'px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800';
+        badgeSql.textContent = 'PRIMARY ONLINE (TGS-SQL-01)';
+        descSql.textContent = 'SQL Server running on primary node TGS-SQL-01.';
+      } else if (sql2) {
+        badgeSql.className = 'px-2.5 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-800';
+        badgeSql.textContent = 'FAILOVER ACTIVE (TGS-SQL-02)';
+        descSql.textContent = 'WSFC detected primary failure! Virtual IP and database instance auto-failed over to TGS-SQL-02.';
+        appendLog(`[WSFC FAILOVER] SQL Service failed over from SQL-01 -> TGS-SQL-02. Application connection string unbroken.`);
+      } else {
+        badgeSql.className = 'px-2.5 py-1 text-xs font-bold rounded-full bg-rose-100 text-rose-800';
+        badgeSql.textContent = 'DATABASE OFFLINE (0 Nodes)';
+        descSql.textContent = 'Both SQL cluster nodes offline! Database-backed applications failed.';
+        appendLog(`[CRITICAL] SQL Cluster instance completely down.`);
+      }
+    }
+
+    function appendLog(msg) {
+      const log = document.getElementById('sim-log-output');
+      const p = document.createElement('p');
+      const time = new Date().toLocaleTimeString();
+      p.innerHTML = `<span class="text-amber-400">[${time}]</span> ${msg}`;
+      log.appendChild(p);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function resetSimulation() {
+      document.getElementById('sim-gw1').checked = true;
+      document.getElementById('sim-gw2').checked = true;
+      document.getElementById('sim-fs1').checked = true;
+      document.getElementById('sim-fs2').checked = true;
+      document.getElementById('sim-fs3').checked = true;
+      document.getElementById('sim-sql1').checked = true;
+      document.getElementById('sim-sql2').checked = true;
+      runFailoverSimulation();
+      appendLog('[SYSTEM RESET] All 12 server endpoints restored to online state.');
+    }
+
+    // Search Network Table
+    function searchNetworkTable() {
+      const input = document.getElementById('network-search').value.toLowerCase();
+      const rows = document.querySelectorAll('#inventory-table tbody tr');
+
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(input) ? '' : 'none';
+      });
+    }
+
+    // Deployment Master Checklist State Tracking
+    function toggleChecklistItem(index) {
+      const chk = document.getElementById(`chk-${index}`);
+      chk.checked = !chk.checked;
+      updateChecklistProgress();
+    }
+
+    function updateChecklistProgress() {
+      let completed = 0;
+      for (let i = 1; i <= 6; i++) {
+        if (document.getElementById(`chk-${i}`).checked) completed++;
+      }
+      const pct = Math.round((completed / 6) * 100);
+      document.getElementById('checklist-progress-text').textContent = `${completed} / 6 Completed (${pct}%)`;
+
+      // Save to localStorage
+      localStorage.setItem('tgs_deployment_progress', JSON.stringify({
+        c1: document.getElementById('chk-1').checked,
+        c2: document.getElementById('chk-2').checked,
+        c3: document.getElementById('chk-3').checked,
+        c4: document.getElementById('chk-4').checked,
+        c5: document.getElementById('chk-5').checked,
+        c6: document.getElementById('chk-6').checked,
+      }));
+    }
+
+    function loadChecklistProgress() {
+      const saved = localStorage.getItem('tgs_deployment_progress');
+      if (saved) {
+        try {
+          const data = JSON.parse(saved);
+          if (data.c1) document.getElementById('chk-1').checked = true;
+          if (data.c2) document.getElementById('chk-2').checked = true;
+          if (data.c3) document.getElementById('chk-3').checked = true;
+          if (data.c4) document.getElementById('chk-4').checked = true;
+          if (data.c5) document.getElementById('chk-5').checked = true;
+          if (data.c6) document.getElementById('chk-6').checked = true;
+        } catch(e){}
+      }
+      updateChecklistProgress();
+    }
+
+    // Initialize Chart.js Visualization
+    function initCharts() {
+      const ctx = document.getElementById('tierDistributionChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Perimeter GW', 'Identity DCs', 'RDS Compute', 'DFS Storage', 'SQL Cluster'],
+          datasets: [{
+            label: 'Assigned Host Count',
+            data: [3, 2, 3, 3, 2],
+            backgroundColor: [
+              '#4f46e5',
+              '#2563eb',
+              '#7c3aed',
+              '#0d9488',
+              '#e11d48'
+            ],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return ` Hosts: ${context.parsed.y} Server(s)`;
                 }
+              }
             }
-            context.fillText(line, x, currentY);
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { stepSize: 1 }
+            }
+          }
         }
+      });
+    }
 
-        function resetZoom() {
-            drawBlueprint();
-        }
-
-        function triggerRedraw() {
-            drawBlueprint();
-        }
-
-        window.onload = function() {
-            drawBlueprint();
-        };
-    </script>
+    // Page Load Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      initCharts();
+      loadChecklistProgress();
+    });
+  </script>
 </body>
 </html>
